@@ -1,5 +1,5 @@
 ---
-name: mathjax-docx
+name: recorde
 description: Put LaTeX equations into .docx files you build or edit headlessly (python-docx, docx-js, pandoc), as MathJax SVG pictures that stay click-to-edit in Word with the Recorde add-in. Use whenever a Word document needs formulas and no Word is running.
 ---
 

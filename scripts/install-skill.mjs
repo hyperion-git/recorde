@@ -1,6 +1,6 @@
-// Install the mathjax-docx skill for Claude Code.
-//   node scripts/install-skill.mjs               → ~/.claude/skills/mathjax-docx  (you, every project)
-//   node scripts/install-skill.mjs --project DIR → DIR/.claude/skills/mathjax-docx (that project only)
+// Install the recorde skill for Claude Code.
+//   node scripts/install-skill.mjs               → ~/.claude/skills/recorde  (you, every project)
+//   node scripts/install-skill.mjs --project DIR → DIR/.claude/skills/recorde (that project only)
 //   --copy   copy the folder instead of symlinking (symlink = follows repo updates)
 //   --remove undo
 // The skill's commands call `mjx-docx`, so also run `npm link` once in this repo.
@@ -11,9 +11,9 @@ import { homedir } from 'node:os';
 const args = process.argv.slice(2);
 const opt = (k) => args.includes(k);
 const project = args.includes('--project') ? resolve(args[args.indexOf('--project') + 1]) : null;
-const src = resolve(new URL('../skills/mathjax-docx', import.meta.url).pathname);
+const src = resolve(new URL('../skills/recorde', import.meta.url).pathname);
 const base = project ? join(project, '.claude', 'skills') : join(homedir(), '.claude', 'skills');
-const dst = join(base, 'mathjax-docx');
+const dst = join(base, 'recorde');
 
 if (opt('--remove')) {
   if (existsSync(dst) || isLink(dst)) { rmSync(dst, { recursive: true, force: true }); console.log(`removed ${dst}`); }

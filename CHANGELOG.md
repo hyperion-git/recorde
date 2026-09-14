@@ -49,7 +49,7 @@ add-in manifest versions; dates are commit dates.
 
 ## 1.18.0 — 2026-09-14
 - Headless toolset `mjx-docx` (process / render / list / update / renumber /
-  check / preview) and the `mathjax-docx` agent skill. Placeholder grammar with
+  check / preview) and the `recorde` agent skill. Placeholder grammar with
   labels and REF-field references; python-docx and pandoc fixtures.
 
 ## 1.17.0 — 2026-09-14

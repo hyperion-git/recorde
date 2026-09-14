@@ -108,14 +108,14 @@ no Python, no network access at run time.
 **Install the agent skill (Claude Code).** After `npm install` and `npm link`:
 
 ```
-npm run skill:install                       # → ~/.claude/skills/mathjax-docx (all your projects)
+npm run skill:install                       # → ~/.claude/skills/recorde (all your projects)
 npm run skill:install -- --project ~/my-paper   # → that project's .claude/skills/ only
 ```
 
-It symlinks `skills/mathjax-docx` (so `git pull` updates it; `--copy` copies
-instead, `--remove` undoes). Claude Code lists it as `mathjax-docx` and applies
-it whenever a Word document needs formulas; `/mathjax-docx` invokes it by hand.
-For other agents, paste `skills/mathjax-docx/AGENTS-snippet.md` into the
+It symlinks `skills/recorde` (so `git pull` updates it; `--copy` copies
+instead, `--remove` undoes). Claude Code lists it as `recorde` and applies
+it whenever a Word document needs formulas; `/recorde` invokes it by hand.
+For other agents, paste `skills/recorde/AGENTS-snippet.md` into the
 project's `AGENTS.md`.
 
 ```
@@ -131,7 +131,7 @@ The output is what the add-in would have inserted — same SVG (PNG fallback),
 `mjx:<uuid>` alt-text title, LaTeX description, source in a
 `urn:mathjax-office:equations` custom XML part — so equations stay click-to-edit
 in Word and `list`/`update` can edit what a human changed in Word. Agent
-procedure and gotchas: `skills/mathjax-docx/SKILL.md` (also linked from
+procedure and gotchas: `skills/recorde/SKILL.md` (also linked from
 `.claude/skills/`); plan and status: `headless/ROADMAP.md`.
 
 ## How it works

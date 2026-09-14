@@ -1,6 +1,6 @@
 > **Status (2026-09-14, v1.18.0):** the headless toolset lives in this repo under `headless/`
 > (`mjx-docx` CLI: process/render/list/update/renumber/check/preview) with the skill in
-> `skills/mathjax-docx/`. Done: H0.3 headless render (worker per font), H1.1–H1.4, H2.1, H2.2,
+> `skills/recorde/`. Done: H0.3 headless render (worker per font), H1.1–H1.4, H2.1, H2.2,
 > the skill text of H2.3. Since v1.18: per-equation placeholder options (font/color/size/style/align),
 > TeX display skips + fleqn/centre alignment, column-aware autofit numbering tables, REF-field references
 > refreshed by `renumber`, Termes default, and the showcase paper built from the add-in's own source
@@ -131,7 +131,7 @@ identically.
 - Pandoc route: `pandoc -f markdown-tex_math_dollars …` leaves the placeholders
   as literal text; `process` does the rest. (Default pandoc would emit OMML.)
 
-### The skill (skills/mathjax-docx/SKILL.md)
+### The skill (skills/recorde/SKILL.md)
 
 Procedure the agent follows, in this order:
 

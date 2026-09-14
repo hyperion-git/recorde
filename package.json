@@ -4,7 +4,7 @@
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
-  "description": "Recorde \u2014 LaTeX equations in Word as editable MathJax SVG (add-in) and in .docx files without Word (mjx-docx CLI).",
+  "description": "Recorde — LaTeX equations in Word as editable MathJax SVG (add-in) and in .docx files without Word (mjx-docx CLI).",
   "scripts": {
     "dev-server": "node dev-server.cjs",
     "start": "office-addin-debugging start manifest.xml desktop",
@@ -19,7 +19,8 @@
     "postinstall": "node scripts/vendor-mathjax.mjs",
     "install-certs": "office-addin-dev-certs install",
     "mjx-docx": "node headless/bin/mjx-docx.mjs",
-    "fixtures:headless": "micromamba run -n sci-base python scripts/make-headless-fixtures.py"
+    "fixtures:headless": "micromamba run -n sci-base python scripts/make-headless-fixtures.py",
+    "skill:install": "node scripts/install-skill.mjs"
   },
   "devDependencies": {
     "@mathjax/mathjax-asana-font": "4.1.2",

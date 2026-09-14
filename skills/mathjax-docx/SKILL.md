@@ -11,11 +11,15 @@ equation pictures. Never hand-write drawing or customXml XML.
 
 ## Prerequisites
 
-Node.js 20+ and a checkout of the Recorde repository with `npm install` run
-once (fetches MathJax, the six font packages and the zip/raster libraries).
-Optional: `npm link` for a global `mjx-docx`; LibreOffice + poppler-utils for
-`preview`; Python with python-docx only if you build documents that way. Word
-is not needed and nothing is fetched at run time.
+Node.js 20+ and a checkout of the Recorde repository
+(`https://github.com/hyperion-git/recorde`) with `npm install` and `npm link`
+run once: the first fetches MathJax, the six font packages and the zip/raster
+libraries, the second puts the `mjx-docx` command on the PATH — every command
+below assumes it. Without `npm link`, replace `mjx-docx` by
+`node $RECORDE_DIR/headless/bin/mjx-docx.mjs`. Optional: LibreOffice +
+poppler-utils for `preview`; Python with python-docx only if you build
+documents that way. Word is not needed and nothing is fetched at run time.
+Not sure it is installed? `mjx-docx --version` prints `mjx-docx/<version>`.
 
 ## Procedure
 
@@ -23,17 +27,17 @@ is not needed and nothing is fetched at run time.
    existing file). Put each equation in a placeholder — see the grammar below.
    Keep a placeholder inside one run when you control runs; splitting across
    runs is tolerated, but never split it across paragraphs.
-2. Run the equation pass (from the Recorde repo root, or via the installed bin):
+2. Run the equation pass:
 
-       node headless/bin/mjx-docx.mjs process paper.docx [--font termes] [--number-style table]
+       mjx-docx process paper.docx [--font termes] [--number-style table] [--align left]
 
    It rewrites the file in place (`-o out.docx` to keep the original). Exit 1 =
    nothing was written; read the `error:` lines (unknown label, empty
    placeholder, tracked changes).
 3. Check before delivery:
 
-       node headless/bin/mjx-docx.mjs check paper.docx      # exit 1 on structural errors
-       node headless/bin/mjx-docx.mjs preview paper.docx    # LibreOffice → preview/paper-1.png …
+       mjx-docx check paper.docx      # exit 1 on structural errors
+       mjx-docx preview paper.docx    # LibreOffice → preview/paper-1.png …
 
    Look at the page images. LibreOffice ignores the inline baseline shift and
    spaces tables differently from Word — judge content, not fine layout.
@@ -69,7 +73,8 @@ is not needed and nothing is fetched at run time.
 - Two-column sections: numbering tables fit the column automatically, but an
   equation wider than the column is clipped. Break long equations with
   `\begin{aligned} … \\ … \end{aligned}` (about 19 em per line at 10 pt in a
-  3.4-inch column). The showcase paper (`node scripts/make-showcase-paper.mjs`)
+  3.4-inch column). The showcase paper (`node scripts/make-showcase-paper.mjs`
+  in the Recorde repo)
   is the reference for what fits.
 - Numbering styles (`--number-style`): `table` (default; number flush right in a
   borderless 1×2 table, renders everywhere), `inline` (number baked into the

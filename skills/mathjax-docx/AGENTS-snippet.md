@@ -3,7 +3,8 @@
 
 Write formulas as placeholders (`[[math: …]]` inline, `[[display: …]]`,
 `[[eq#label: …]]` numbered, `[[ref: label]]`) while building the .docx, then run
-`node <recorde-repo>/headless/bin/mjx-docx.mjs process file.docx` followed by
-`check` and `preview`. Full procedure and grammar: `skills/mathjax-docx/SKILL.md`
-in the Recorde repo. Never emit pandoc `$…$` math (OMML) or hand-written
-drawing XML for equations.
+`mjx-docx process file.docx` followed by `mjx-docx check` and `mjx-docx preview`
+(`mjx-docx` comes from `npm link` in the Recorde repo,
+https://github.com/hyperion-git/recorde). Full procedure and grammar:
+`skills/mathjax-docx/SKILL.md` there. Never emit pandoc `$…$` math (OMML) or
+hand-written drawing XML for equations.

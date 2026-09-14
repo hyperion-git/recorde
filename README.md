@@ -105,6 +105,19 @@ PNG fallback inside each picture uses `@resvg/resvg-js` (installed with
 `npm install`; cairosvg or ImageMagick are used if it is missing). No Word,
 no Python, no network access at run time.
 
+**Install the agent skill (Claude Code).** After `npm install` and `npm link`:
+
+```
+npm run skill:install                       # → ~/.claude/skills/mathjax-docx (all your projects)
+npm run skill:install -- --project ~/my-paper   # → that project's .claude/skills/ only
+```
+
+It symlinks `skills/mathjax-docx` (so `git pull` updates it; `--copy` copies
+instead, `--remove` undoes). Claude Code lists it as `mathjax-docx` and applies
+it whenever a Word document needs formulas; `/mathjax-docx` invokes it by hand.
+For other agents, paste `skills/mathjax-docx/AGENTS-snippet.md` into the
+project's `AGENTS.md`.
+
 ```
 node headless/bin/mjx-docx.mjs process paper.docx [--font termes] [--align left]
 node headless/bin/mjx-docx.mjs check paper.docx                    # structural lint (exit 1 = fix first)

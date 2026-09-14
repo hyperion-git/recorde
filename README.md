@@ -28,8 +28,20 @@ whose equations open in the add-in.
 
 ## Install (end users)
 
-The add-in is web-hosted; the only file to install is `manifest.xml` from the
-release you were given (it points at the hosted build).
+**What you need**
+
+- Word for Microsoft 365 on Windows or Mac (current channel), or Word on the
+  web. The pane detects what the host can do at start-up: vector SVG insert
+  needs ImageCoercion 1.2 (Microsoft 365 desktop builds since 2019), the web
+  falls back to a high-resolution raster picture, and a host with neither
+  shows the preview but disables Insert. Baseline-aligned inline math needs
+  Word 2507 or later. Older perpetual versions (2016/2019/2021) are untested.
+- Network access to the hosting site on first use (Word caches the pane
+  afterwards). No admin rights for *Upload My Add-in*; no installer; nothing
+  is written outside the document and Word's add-in cache.
+
+**Steps.** The add-in is web-hosted; the only file to install is
+`manifest.xml` from the release you were given (it points at the hosted build).
 
 - **Word for Windows / Mac:** Home → Add-ins → *More Add-ins* → **My Add-ins** →
   *Upload My Add-in* → choose `manifest.xml`. Word on the web: Insert → Add-ins
@@ -71,14 +83,27 @@ A host that supports neither coercion still previews but cannot insert.
    macros).
 
 The Examples menu's *Testing* group inserts a one-page test page and a
-RevTeX-style three-page test paper (≈ 70 equations across every option); the
+RevTeX-style three-page test paper (76 equations across every option); the
 same paper is produced headlessly by `node scripts/make-showcase-paper.mjs`.
 
 ## Headless: equations without Word (`mjx-docx`)
 
 CLI agents and build pipelines never have a running Word. `headless/` ships the
 same renderer as an OOXML post-processor: write equations as placeholders while
-building a `.docx` with python-docx, docx-js or pandoc, then
+building a `.docx` with python-docx, docx-js or pandoc, then run the pass.
+
+**Install:** Node.js 20 or newer, then
+
+```
+git clone https://github.com/hyperion-git/recorde.git && cd recorde
+npm install            # MathJax + fonts + zip/raster libraries (~200 MB with fonts)
+npm link               # optional: puts `mjx-docx` on your PATH; else use node headless/bin/mjx-docx.mjs
+```
+
+`preview` additionally needs LibreOffice and poppler-utils (`pdftoppm`); the
+PNG fallback inside each picture uses `@resvg/resvg-js` (installed with
+`npm install`; cairosvg or ImageMagick are used if it is missing). No Word,
+no Python, no network access at run time.
 
 ```
 node headless/bin/mjx-docx.mjs process paper.docx [--font termes] [--align left]
@@ -94,9 +119,7 @@ The output is what the add-in would have inserted — same SVG (PNG fallback),
 `urn:mathjax-office:equations` custom XML part — so equations stay click-to-edit
 in Word and `list`/`update` can edit what a human changed in Word. Agent
 procedure and gotchas: `skills/mathjax-docx/SKILL.md` (also linked from
-`.claude/skills/`); plan and status: `headless/ROADMAP.md`. Requires Node ≥ 20;
-PNG fallbacks use `@resvg/resvg-js` (optional dependency; falls back to cairosvg
-or ImageMagick); `preview` needs LibreOffice and poppler.
+`.claude/skills/`); plan and status: `headless/ROADMAP.md`.
 
 ## How it works
 
@@ -124,6 +147,10 @@ or ImageMagick); `preview` needs LibreOffice and poppler.
   `node --test`; the headless CLI imports them directly.
 
 ## Development
+
+Needs Node.js 20+, npm, and for the in-Word loop Word for Microsoft 365 on the
+same machine (the dev server sideloads the manifest); the showcase-paper script
+also needs Python with python-docx.
 
 ```sh
 npm install            # toolchain + MathJax + fonts (postinstall vendors MathJax)

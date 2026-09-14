@@ -1,4 +1,4 @@
-# In-Word verification package (v1.12.0)
+# In-Word verification package (current build: see `manifest.xml` here; sections are tagged with the version that introduced them)
 
 `manifest.xml` here points at the live GitHub Pages build
 (https://hyperion-git.github.io/recorde/), built from `main` on every push.

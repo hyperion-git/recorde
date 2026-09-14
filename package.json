@@ -50,5 +50,8 @@
   "homepage": "https://hyperion-git.github.io/recorde/",
   "bugs": {
     "url": "https://github.com/hyperion-git/recorde/issues"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

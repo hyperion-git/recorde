@@ -1,6 +1,6 @@
 # MathJax Office — Development Program
 
-Status (v1.22.1 / M2 complete except pane cross-references, M3 partly): **inserts on Word desktop (vector SVG) and Word on the web (raster)**; colour, palette, macro preamble (paper template), three numbering styles with migration and renumber, TeX display spacing/alignment, self-hosted MathJax, German UI, dark theme, headless `mjx-docx` CLI + agent skill (`headless/ROADMAP.md`). First public release planned as v2.0.0 (`docs/RELEASE.md`).
+Status (v1.23.1 / M2 complete except pane cross-references, M3 partly): **inserts on Word desktop (vector SVG) and Word on the web (raster)**; colour, palette, macro preamble (paper template), three numbering styles with migration and renumber, TeX display spacing/alignment, self-hosted MathJax, German UI, dark theme, headless `mjx-docx` CLI + agent skill (`headless/ROADMAP.md`). First public release planned as v2.0.0 (`docs/RELEASE.md`).
 web (raster PNG)**. LaTeX → SVG/PNG insert, 6 MathJax-4 fonts, click-to-edit,
 custom-XML-part storage with alt-text cross-document recovery, settings persistence,
 visible error UX, ribbon button, manifest validated against Microsoft's XSD. (v1.0

@@ -4,11 +4,23 @@ All notable changes to Recorde (formerly "MathJax Office"). Versions are the
 add-in manifest versions; dates are commit dates.
 
 ## Unreleased — planned v2.0.0 (first release)
-- Release polish: README, PRIVACY, this changelog, release checklist.
-- Ribbon button and pane title say "Recorde" (1.22.3).
+- Public repository `hyperion-git/recorde` (squashed history); hosted build at
+  `https://hyperion-git.github.io/recorde/`; support via GitHub issues.
+- Requirements documented (README, support page, skill); `engines.node >= 20`.
+
+## 1.23.1 — 2026-09-14
+- Equation numbers vertically centred on the equation (table/field styles).
+
+## 1.23.0 — 2026-09-14
 - Numbering defaults to the flush-right table style; cell padding zeroed so
-  the number sits exactly on the right text border (1.23.0) and is vertically
-  centred on the equation (1.23.1).
+  the number sits exactly on the right text border.
+
+## 1.22.3 — 2026-09-14
+- Ribbon button and pane title say "Recorde" instead of "Equations".
+
+## 1.22.2 — 2026-09-14
+- Release preparation: README rewrite, CHANGELOG, PRIVACY, support page,
+  release checklist, roadmap status.
 
 ## 1.22.1 — 2026-09-14
 - Termes is the default font on every path (headless CLI, alt-text recovery),

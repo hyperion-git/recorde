@@ -1,7 +1,10 @@
 > **Status (2026-09-14, v1.18.0):** the headless toolset lives in this repo under `headless/`
 > (`mjx-docx` CLI: process/render/list/update/renumber/check/preview) with the skill in
 > `skills/mathjax-docx/`. Done: H0.3 headless render (worker per font), H1.1–H1.4, H2.1, H2.2,
-> the skill text of H2.3. NOT done: H0.1 golden fixture from desktop Word (the OOXML shapes are
+> the skill text of H2.3. Since v1.18: per-equation placeholder options (font/color/size/style/align),
+> TeX display skips + fleqn/centre alignment, column-aware autofit numbering tables, REF-field references
+> refreshed by `renumber`, Termes default, and the showcase paper built from the add-in's own source
+> (`scripts/make-showcase-paper.mjs`). NOT done: H0.1 golden fixture from desktop Word (the OOXML shapes are
 > spec-derived and LibreOffice-checked only — verify in Word, then pin), H0.2 monorepo split
 > (the CLI imports the pure modules straight from `src/`), the H2.3 agent trial, H3.
 > Plan text below is the original and unchanged.

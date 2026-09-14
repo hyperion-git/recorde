@@ -9,6 +9,14 @@ You write equations as **placeholders** in the text while building the document
 with whatever tool you already use; then one command replaces them with rendered
 equation pictures. Never hand-write drawing or customXml XML.
 
+## Prerequisites
+
+Node.js 20+ and a checkout of the Recorde repository with `npm install` run
+once (fetches MathJax, the six font packages and the zip/raster libraries).
+Optional: `npm link` for a global `mjx-docx`; LibreOffice + poppler-utils for
+`preview`; Python with python-docx only if you build documents that way. Word
+is not needed and nothing is fetched at run time.
+
 ## Procedure
 
 1. Build the document as usual (python-docx, docx-js, pandoc, or edit an

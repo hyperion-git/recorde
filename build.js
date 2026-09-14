@@ -1,8 +1,8 @@
 // Packaging build (WP0.2). Produces dist/ = src/ + assets/ + a manifest whose
 // dev-origin URLs are rewritten to BASE_URL. Pure Node, ESM, no dependencies.
 //
-//   BASE_URL=https://you.github.io/mathjax-office node build.js
-//   node build.js https://you.github.io/mathjax-office
+//   BASE_URL=https://you.github.io/recorde node build.js
+//   node build.js https://you.github.io/recorde
 //
 // The browser sources use relative paths (incl. the self-hosted MathJax under
 // assets/vendor), so only manifest.xml carries the dev origin to rewrite.

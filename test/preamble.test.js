@@ -67,7 +67,7 @@ test('every math snippet of the paper template renders with DEFAULT_PREAMBLE (no
   // Refresh the fixture with scripts/extract-template-math.mjs when the
   // template changes.
   const { snippets } = JSON.parse(readFileSync(new URL('./fixtures/template-math.json', import.meta.url), 'utf8'));
-  assert.ok(snippets.length >= 20, 'fixture present');
+  assert.ok(snippets.length >= 12, 'fixture present');
   const MathJax = await initMathJaxLikePane();
   await MathJax.tex2svgPromise(DEFAULT_PREAMBLE);
   const problems = [];

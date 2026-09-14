@@ -7,10 +7,18 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const src = process.argv[2] || `${process.env.HOME}/dev/paper-template/10-main.tex`;
 const main = readFileSync(src, 'utf8').replace(/(^|[^\\])%.*$/gm, '$1');
 const out = [];
+const seen = new Set();
 const re = /\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\begin\{(equation\*?|align\*?|gather\*?|multline\*?)\}([\s\S]+?)\\end\{\3\}|(?<!\$)\$([^$\n]+?)\$(?!\$)|\\\(([\s\S]+?)\\\)/g;
 for (const m of main.matchAll(re)) {
-  const tex = (m[1] ?? m[2] ?? m[4] ?? m[5] ?? m[6]).replace(/\\label\{[^}]*\}|\\nonumber/g, '').replace(/\\\\\s*$/, '').trim();
-  if (tex) out.push({ tex, display: !(m[5] ?? m[6]) });
+  let tex = (m[1] ?? m[2] ?? m[4] ?? m[5] ?? m[6]).replace(/\\label\{[^}]*\}|\\nonumber/g, '').replace(/\\\\\s*$/, '').trim();
+  // The fixture proves macro coverage, nothing else: skip fragments without a
+  // macro (prose between $…$ spans, bare letters), dedupe, and neutralise
+  // measured values inside \SI/\qty/\num so no manuscript number is recorded.
+  if (!tex.includes('\\')) continue;
+  tex = tex.replace(/\\(SI|qty|num)\{[^}]*\}/g, '\\$1{1}');
+  if (seen.has(tex)) continue;
+  seen.add(tex);
+  out.push({ tex, display: !(m[5] ?? m[6]) });
 }
 // Only the math is recorded — no document text, no author/affiliation macros.
 writeFileSync('test/fixtures/template-math.json', JSON.stringify({ source: '10-main.tex', snippets: out }, null, 2) + '\n');

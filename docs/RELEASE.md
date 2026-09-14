@@ -55,4 +55,4 @@ A draft release can be created earlier with `--draft` to review the notes.
 
 - Copy `dist/manifest.xml` to `deploy/` and to the Windows sideload folder.
 - Smoke-test the *released* manifest in a fresh Word profile (Upload My Add-in).
-- Update `ROADMAP.md` status and `~/.claude/state/active/mathjax-office.md`.
+- Update `ROADMAP.md` status.

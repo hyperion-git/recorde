@@ -9,7 +9,7 @@
 # MathJax Office — Headless toolset & agent skill
 
 Status: **planning (H0 not started)**. Companion to the Word add-in in
-`~/dev/mathjax-office` (v1.10.0). Goal: let a CLI agent (Claude Code, Codex, …)
+the add-in in this repository (then v1.10.0). Goal: let a CLI agent (Claude Code, Codex, …)
 place MathJax equations into Office documents it assembles, with output that is
 **indistinguishable from what the add-in inserts** — same SVG, same alt text,
 same custom XML part — so the documents stay click-to-edit in Word and equations
@@ -66,7 +66,7 @@ packages/addin  the existing Word add-in                  ← moved, unchanged
 
 **Repo layout decision (make in H0.2):**
 
-> **Recommended:** convert `~/dev/mathjax-office` into an npm-workspace monorepo
+> **Recommended:** convert this repository into an npm-workspace monorepo
 > (`packages/core|addin|cli`, `skills/`). One renderer version, one `bump`, the
 > existing CI/Pages deploy keep working (`build.js` just gains a path prefix).
 > This directory then becomes redundant, or holds only the skill.
@@ -186,7 +186,7 @@ Critical path: H0.1 → H0.2 → H1.1 → H1.2 → H1.3 → H1.4 → H2.
 
 ### H0.2 — Workspace + core extraction  · `M` · low risk
 - **Approach:** npm workspaces; move `src/` → `packages/addin/src/`, pure
-  modules → `packages/core/src/`; add-in imports from `@mathjax-office/core`.
+  modules → `packages/core/src/`; add-in imports from `@recorde/core`.
   `build.js`, `vendor-mathjax.mjs`, `bump-version.mjs`, CI, Pages deploy adjust
   paths only. Bump sync now covers three `package.json` + `manifest.xml`.
 - **Tests:** existing suites move with their modules; `npm test` at the root runs

@@ -1,0 +1,117 @@
+{
+  "source": "10-main.tex",
+  "snippets": [
+    {
+      "tex": "\\QmOpHamiltonian = \\QmOpHamiltonianFree + \\QmOpInteraction",
+      "display": false
+    },
+    {
+      "tex": "\\QmOpHamiltonianFree = \\QmOpP^{2}/(2m)",
+      "display": false
+    },
+    {
+      "tex": "\\QmOpInteraction",
+      "display": false
+    },
+    {
+      "tex": "\\OpComm*{\\QmOpX, \\QmOpP} = \\II\\hbar \\QmUnity,",
+      "display": true
+    },
+    {
+      "tex": "[t_0, t_1]",
+      "display": false
+    },
+    {
+      "tex": "\\QmOpTimeEvolution(t_1, t_0)\r\n    = \\OpOrderTime \\exp\\!\\left[-\\frac{\\II}{\\hbar}\r\n      \\VarInt{t_0}{t_1}\\Ds{t}\\, \\QmOpHamiltonian(t)\\right],",
+      "display": true
+    },
+    {
+      "tex": "\\OpOrderTime",
+      "display": false
+    },
+    {
+      "tex": "and the Moller operators",
+      "display": false
+    },
+    {
+      "tex": "\\Ket{\\psi}",
+      "display": false
+    },
+    {
+      "tex": "\\Avg*{\\QmOp{O}} = \\Bra{\\psi}\\QmOp{O}\\Ket{\\psi}",
+      "display": false
+    },
+    {
+      "tex": "\\OpPlaceholder",
+      "display": false
+    },
+    {
+      "tex": "\\Avg*{\\OpPlaceholder}_{\\psi}",
+      "display": false
+    },
+    {
+      "tex": "\\Delta = 2\\pi \\times \\SI{1.2(3)}{\\kilo\\hertz}",
+      "display": false
+    },
+    {
+      "tex": ", and the interrogation time",
+      "display": false
+    },
+    {
+      "tex": "\\Delta",
+      "display": false
+    },
+    {
+      "tex": "\\Omega_{\\text{eff}}",
+      "display": false
+    },
+    {
+      "tex": "\\tau",
+      "display": false
+    },
+    {
+      "tex": "T",
+      "display": false
+    },
+    {
+      "tex": "\\to",
+      "display": false
+    },
+    {
+      "tex": "\\blacksquare",
+      "display": false
+    },
+    {
+      "tex": "\\blacksquare",
+      "display": false
+    },
+    {
+      "tex": "\\blacksquare",
+      "display": false
+    },
+    {
+      "tex": "\\blacksquare",
+      "display": false
+    },
+    {
+      "tex": "\\blacksquare",
+      "display": false
+    },
+    {
+      "tex": "\\blacksquare",
+      "display": false
+    },
+    {
+      "tex": "\\blacksquare",
+      "display": false
+    },
+    {
+      "tex": "\\blacksquare",
+      "display": false
+    },
+    {
+      "tex": "\\OpPlaceholder",
+      "display": false
+    }
+  ]
+}

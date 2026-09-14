@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>Recorde</title>
+
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <!-- MathJax 4 is bootstrapped from taskpane.js (loadMathJax), not a static
+       <script> tag, so the selected font can be applied. MathJax binds its
+       font to the output jax at startup and offers no in-place swap, so
+       changing fonts re-injects tex-svg.js with a new output.font. MathJax 4.1.2
+       and its font packages are self-hosted under assets/vendor/mathjax (WP3.3),
+       so there is no CDN dependency at runtime. -->
+
+  <style>
+    :root {
+      /* Native controls (select, checkbox, scrollbars) must follow the PANE's
+         theme (data-theme, set from Word's theme), not the OS preference;
+         'light dark' here let them diverge when system and Word themes differ. */
+      color-scheme: light;
+
+      /* Fluent 2 neutrals (light) */
+      --bg:            #faf9f8;
+      --surface:       #ffffff;
+      --surface-alt:   #f3f2f1;
+      --hover:         #edebe9;
+      --border:        #d1d1d1;
+      --border-soft:   #e1dfdd;
+      --border-strong: #8a8886;
+
+      /* Text */
+      --text:          #242424;
+      --text-soft:     #424242;
+      --text-faint:    #616161;
+      --text-disabled: #a19f9d;
+
+      /* Accent (Office blue) */
+      --accent:         #0f6cbd;
+      --accent-hover:   #115ea3;
+      --accent-pressed: #0c3b5e;
+      --accent-fg:      #ffffff;
+
+      /* Editing state (Fluent red) */
+      --edit:        #c50f1f;
+      --edit-bg:     #fdf3f4;
+      --edit-border: #f1bbbc;
+
+      /* Warning notice */
+      --warn-bg:     #fff4ce;
+      --warn-fg:     #6b5a00;
+      --warn-border: #f2d77a;
+
+      /* The preview is "paper" — a document surface that stays light in both
+         themes so an equation (typically dark, bound for a white page) previews
+         as it will look in the document, and never goes invisible in dark mode. */
+      --paper:       #ffffff;
+      --paper-text:  #6b6b6b;
+
+      --selection:   rgba(15, 108, 189, 0.20);
+      --focus-ring:  0 0 0 2px rgba(15, 108, 189, 0.32);
+
+      /* Type */
+      --font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system,
+              BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      --font-mono: "Cascadia Code", "Cascadia Mono", Consolas, "SF Mono",
+                   Menlo, ui-monospace, monospace;
+
+      /* 4pt spacing scale */
+      --s-1: 4px;
+      --s-2: 8px;
+      --s-3: 12px;
+      --s-4: 16px;
+      --s-5: 24px;
+
+      /* One radius scale: controls 4px, containers 6px (Fluent 2) */
+      --r-sm: 4px;
+      --r-md: 6px;
+
+      --shadow-1: 0 1px 2px rgba(0,0,0,0.10);
+    }
+
+    /* Dark theme — Fluent 2 dark neutrals. taskpane.js sets <html data-theme>
+       from the live Office theme (falling back to prefers-color-scheme), so the
+       pane matches Word's Colorful / Dark Gray / Black themes. */
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg:            #1f1f1f;
+      --surface:       #2b2b2b;
+      --surface-alt:   #333333;
+      --hover:         #3d3d3d;
+      --border:        #4a4a4a;
+      --border-soft:   #3a3a3a;
+      --border-strong: #707070;
+
+      --text:          #f5f5f5;
+      --text-soft:     #d6d6d6;
+      --text-faint:    #adadad;
+      --text-disabled: #6e6e6e;
+
+      --accent:         #115ea3;
+      --accent-hover:   #1a6cbf;
+      --accent-pressed: #0e4e88;
+      --accent-fg:      #ffffff;
+
+      --edit:        #ff99a4;
+      --edit-bg:     #3b2326;
+      --edit-border: #6e3239;
+
+      --warn-bg:     #3a3320;
+      --warn-fg:     #fbe38a;
+      --warn-border: #6b5d24;
+
+      --selection:   rgba(98, 171, 245, 0.32);
+      --focus-ring:  0 0 0 2px rgba(98, 171, 245, 0.45);
+
+      --shadow-1: 0 1px 3px rgba(0,0,0,0.45);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.4;
+      padding: var(--s-4);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Status banner ───────────────────────────────────────── */
+    #status {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      padding: 8px var(--s-3);
+      margin-bottom: var(--s-4);
+      background: var(--surface-alt);
+      border: 1px solid var(--border-soft);
+      color: var(--text-soft);
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    #status::before {
+      content: '';
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-faint);
+      flex-shrink: 0;
+    }
+    #status.editing {
+      background: var(--edit-bg);
+      color: var(--edit);
+      border-color: var(--edit-border);
+    }
+    #status.editing::before { background: var(--edit); }
+
+    /* ── Notice (host capability / errors) ───────────────────── */
+    .notice {
+      padding: 8px var(--s-3);
+      margin-bottom: var(--s-4);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--r-md);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .notice[hidden] { display: none; }
+    .notice__action {
+      margin-left: var(--s-2);
+      padding: 2px 8px;
+      font: inherit;
+      font-size: 12px;
+      color: inherit;
+      background: transparent;
+      border: 1px solid currentColor;
+      border-radius: var(--r-md);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .notice__action:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
+    .notice--info {
+      background: var(--surface-alt);
+      color: var(--text-soft);
+      border-color: var(--border-soft);
+    }
+    .notice--warn {
+      background: var(--warn-bg);
+      color: var(--warn-fg);
+      border-color: var(--warn-border);
+    }
+    .notice--error {
+      background: var(--edit-bg);
+      color: var(--edit);
+      border-color: var(--edit-border);
+    }
+
+    /* ── Section labels ──────────────────────────────────────── */
+    .label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 var(--s-1) 0;
+      display: block;
+    }
+
+    /* ── LaTeX input ─────────────────────────────────────────── */
+    .field { margin-bottom: var(--s-4); }
+    .field__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--s-2);
+      margin: 0 0 var(--s-1);
+    }
+    .field__head .label { margin: 0; }
+    .examples {
+      max-width: 55%;
+      padding: 2px 22px 2px 6px;
+      font-family: var(--font);
+      font-size: 12px;
+      color: var(--text-soft);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      cursor: pointer;
+    }
+    .examples:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+    /* Syntax error from MathJax, shown under the source (see renderPreview) */
+    .field__error {
+      margin-top: var(--s-1);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--edit);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .editor--error, .editor--error:hover { border-color: var(--edit); }
+    .editor--error:focus-within { border-color: var(--edit); box-shadow: 0 0 0 2px var(--edit-border); }
+    .editor {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      overflow: hidden;
+      transition: border-color 0.1s ease, box-shadow 0.1s ease;
+    }
+    .editor:hover { border-color: var(--border-strong); }
+    .editor:focus-within {
+      border-color: var(--accent);
+      box-shadow: var(--focus-ring);
+    }
+    .editor__gutter {
+      flex: 0 0 auto;
+      min-width: 28px;
+      padding: 8px 6px 8px 8px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-faint);
+      background: var(--surface-alt);
+      text-align: right;
+      user-select: none;
+      white-space: pre;
+      overflow: hidden;
+      border-right: 1px solid var(--border-soft);
+    }
+    #latex {
+      flex: 1;
+      min-height: 96px;
+      padding: 8px 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      resize: vertical;
+      outline: none;
+      tab-size: 2;
+    }
+    #latex::placeholder {
+      color: var(--text-disabled);
+      font-family: var(--font-mono);
+    }
+
+    /* ── Mode toggle (Fluent segmented) ──────────────────────── */
+    .mode {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--r-md);
+      padding: 2px;
+      margin: 0 0 var(--s-4) 0;
+    }
+    .mode__opt {
+      position: relative;
+      text-align: center;
+      padding: 6px var(--s-2);
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-soft);
+      border-radius: var(--r-sm);
+      transition: background 0.1s ease, color 0.1s ease;
+      user-select: none;
+    }
+    .mode__opt input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .mode__opt:hover { background: var(--hover); }
+    .mode__opt:has(input:checked) {
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: var(--shadow-1);
+    }
+    .mode__opt:has(input:focus-visible) {
+      box-shadow: var(--focus-ring);
+    }
+
+    /* ── Preview ─────────────────────────────────────────────── */
+    #preview {
+      padding: var(--s-5) var(--s-3);
+      min-height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      font-size: 18px;
+      color: #242424;
+      text-align: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+    #preview:empty::before {
+      content: 'Preview';
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--paper-text);
+    }
+    #preview mjx-container { margin: 0 !important; }
+    /* Inline mode: the equation sits in a line of document-like text so its
+       baseline and size are judged in context (Termes ≈ Times). The context text
+       keeps the paper's ink colour, not the equation colour. */
+    #preview.preview--inline { font-family: "Times New Roman", Times, "Nimbus Roman", serif; }
+    #preview .ctx { color: #242424; white-space: pre; }
+
+    /* ── Settings ────────────────────────────────────────────── */
+    .settings { margin: 0; }
+    .settings .setting:last-child { margin-bottom: 0; }
+    /* Prefab colour swatches (colors.js): one wrapping row per palette group */
+    .swatches { display: grid; gap: 4px; margin: 0 0 var(--s-1); }
+    .swatch-row { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; }
+    .swatch-row__label {
+      flex: 0 0 56px;
+      font-size: 11px;
+      color: var(--text-faint);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .swatch-btn {
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      border: 1px solid rgba(0, 0, 0, 0.18);
+      border-radius: 3px;
+      transition: transform 0.06s ease;
+    }
+    :root[data-theme="dark"] .swatch-btn { border-color: rgba(255, 255, 255, 0.22); }
+    .swatch-btn:hover { transform: scale(1.15); }
+    .swatch-btn--active { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+    .swatch-btn:focus-visible { box-shadow: var(--focus-ring); }
+    .setting {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: var(--s-3);
+      align-items: center;
+      margin-bottom: var(--s-2);
+    }
+    .setting--size {
+      grid-template-columns: 56px 1fr 56px;
+    }
+    .setting__label {
+      font-size: 13px;
+      color: var(--text-soft);
+      font-weight: 400;
+    }
+    .setting__ctrl {
+      width: 100%;
+      padding: 5px 8px;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      outline: none;
+      transition: border-color 0.1s ease, box-shadow 0.1s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .setting__ctrl:hover:not(:disabled) { border-color: var(--border-strong); }
+    .setting__ctrl:focus {
+      border-color: var(--accent);
+      box-shadow: var(--focus-ring);
+    }
+    .setting__ctrl:disabled {
+      color: var(--text-disabled);
+      background: var(--surface-alt);
+      cursor: not-allowed;
+    }
+    select.setting__ctrl {
+      padding-right: 26px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23616161' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      background-position: right 8px center;
+      background-repeat: no-repeat;
+      background-size: 12px 12px;
+    }
+    select.setting__ctrl:disabled {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23a19f9d' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+    }
+    /* Lighter chevron on dark surfaces. */
+    :root[data-theme="dark"] select.setting__ctrl {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23adadad' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+    }
+    :root[data-theme="dark"] select.setting__ctrl:disabled {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%236e6e6e' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+    }
+    input.setting__ctrl { text-align: right; }
+    input.setting__ctrl[type="color"] {
+      height: 30px;
+      padding: 2px;
+      cursor: pointer;
+    }
+    input.setting__ctrl::-webkit-inner-spin-button,
+    input.setting__ctrl::-webkit-outer-spin-button {
+      opacity: 0.5;
+    }
+
+    /* ── Numbering ───────────────────────────────────────────── */
+    .numbering { margin: 0 0 var(--s-4); }
+    .numbering > .setting__ctrl { margin: 0 0 var(--s-2); }
+    .check {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      font-size: 13px;
+      color: var(--text-soft);
+      cursor: pointer;
+      user-select: none;
+    }
+    .check input {
+      width: 15px;
+      height: 15px;
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .check:has(input:disabled) {
+      color: var(--text-disabled);
+      cursor: not-allowed;
+    }
+    .check:has(input:disabled) input { cursor: not-allowed; }
+
+    /* ── Symbol palette ──────────────────────────────────────── */
+    .palette {
+      margin: 0 0 var(--s-4);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--r-md);
+      background: var(--surface);
+    }
+    .palette__summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 8px var(--s-3);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-soft);
+      user-select: none;
+    }
+    .palette__summary::-webkit-details-marker { display: none; }
+    .palette__summary::before {
+      content: '▸';
+      display: inline-block;
+      margin-right: var(--s-2);
+      color: var(--text-faint);
+      transition: transform 0.1s ease;
+    }
+    .palette[open] .palette__summary::before { transform: rotate(90deg); }
+    .palette__summary:hover { color: var(--text); }
+    .palette__body { padding: 0 var(--s-3) var(--s-3); }
+    .summary__meta {
+      float: right;
+      max-width: 60%;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 400;
+      color: var(--text-faint);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .swatch {
+      flex: 0 0 auto;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+    }
+    .summary__count { font-weight: 400; color: var(--text-faint); margin-left: var(--s-1); }
+    /* Equation list (document order); click → select + load for editing */
+    .eqlist { list-style: none; margin: 0; display: grid; gap: 2px; }
+    .eqlist__item {
+      width: 100%;
+      display: flex;
+      align-items: baseline;
+      gap: var(--s-2);
+      padding: 5px 8px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--r-sm);
+    }
+    .eqlist__item:hover { background: var(--hover); border-color: var(--border-soft); }
+    .eqlist__item--active { background: var(--edit-bg); border-color: var(--edit-border); }
+    .eqlist__num { flex: 0 0 34px; font-variant-numeric: tabular-nums; color: var(--text-faint); }
+    .eqlist__src {
+      flex: 1;
+      min-width: 0;
+      font-family: var(--font-mono);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .eqlist__empty { padding: 4px 8px; font-size: 12px; color: var(--text-faint); }
+    .palette__cat {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin: var(--s-3) 0 var(--s-1);
+    }
+    .palette__row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .palette__btn {
+      width: auto;
+      min-width: 30px;
+      padding: 4px 8px;
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.2;
+      color: var(--text);
+      background: var(--surface-alt);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: background 0.1s ease, border-color 0.1s ease;
+    }
+    .palette__btn:hover {
+      background: var(--hover);
+      border-color: var(--border-strong);
+    }
+    .preamble {
+      width: 100%;
+      min-height: 56px;
+      padding: 8px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      resize: vertical;
+      outline: none;
+    }
+    .preamble:focus { border-color: var(--accent); box-shadow: var(--focus-ring); }
+    .preamble__hint { font-size: 11px; color: var(--text-faint); margin: var(--s-1) 0 0; }
+
+    /* ── Actions ─────────────────────────────────────────────── */
+    /* Pinned to the pane's bottom edge so Insert never scrolls out of reach.
+       Negative side margins undo the body gutter; the bar paints its own ground. */
+    .actions {
+      position: sticky;
+      bottom: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-2);
+      margin: var(--s-4) calc(-1 * var(--s-4)) calc(-1 * var(--s-4));
+      padding: var(--s-3) var(--s-4) var(--s-4);
+      background: var(--bg);
+      border-top: 1px solid var(--border-soft);
+    }
+    button {
+      width: 100%;
+      padding: 7px 16px;
+      font-family: var(--font);
+      font-size: 14px;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: background 0.1s ease, border-color 0.1s ease, transform 0.06s ease;
+      outline: none;
+    }
+    button:focus-visible { box-shadow: var(--focus-ring); }
+    /* Tactile press — a small physical push on click. */
+    button:active:not(:disabled) { transform: scale(0.985); }
+
+    #insert {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border: 1px solid var(--accent);
+      font-weight: 600;
+      padding: 8px 16px;
+    }
+    #insert:hover:not(:disabled) {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+    #insert:active:not(:disabled) {
+      background: var(--accent-pressed);
+      border-color: var(--accent-pressed);
+    }
+    #insert:disabled {
+      background: var(--surface-alt);
+      color: var(--text-disabled);
+      border-color: var(--border);
+      cursor: not-allowed;
+    }
+
+    #new-eq, #renumber {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-weight: 400;
+    }
+    #new-eq:hover:not(:disabled), #renumber:hover:not(:disabled) {
+      background: var(--hover);
+      border-color: var(--border-strong);
+    }
+    #new-eq:disabled, #renumber:disabled {
+      color: var(--text-disabled);
+      cursor: not-allowed;
+    }
+
+    ::selection { background: var(--selection); }
+
+    /* Narrow pane fallback */
+    @media (max-width: 340px) {
+      body { padding: var(--s-3); }
+      .setting--size {
+        grid-template-columns: 56px 1fr;
+        gap: var(--s-2) var(--s-3);
+      }
+      .setting--size input.setting__ctrl {
+        grid-column: 2;
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+
+    <div id="status" class="new">New equation</div>
+
+    <div id="notice" class="notice" hidden></div>
+
+    <section class="field">
+      <div class="field__head">
+        <label for="latex" class="label" data-i18n="latexLabel">LaTeX source</label>
+        <select id="examples" class="examples" aria-label="Load an example equation">
+          <option value="" selected data-i18n="examplesLabel">Examples…</option>
+        </select>
+      </div>
+      <div class="editor">
+        <div class="editor__gutter" id="latex-gutter" aria-hidden="true">1</div>
+        <textarea id="latex" spellcheck="false"
+          placeholder="\int_0^\infty e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}"></textarea>
+      </div>
+      <div id="latex-error" class="field__error" role="alert" hidden></div>
+    </section>
+
+    <details class="palette">
+      <summary class="palette__summary" data-i18n="symbols">Symbols</summary>
+      <div id="palette" class="palette__body"></div>
+    </details>
+
+    <details class="palette">
+      <summary class="palette__summary" data-i18n="macros">Macros</summary>
+      <div class="palette__body">
+        <textarea id="preamble" class="preamble" spellcheck="false"
+          placeholder="\newcommand{\R}{\mathbb{R}}"></textarea>
+        <p class="preamble__hint" data-i18n="macrosHint">\newcommand definitions applied to every equation in this document.</p>
+      </div>
+    </details>
+
+    <fieldset class="mode" role="radiogroup" aria-label="Equation mode">
+      <label class="mode__opt">
+        <input type="radio" name="mode" id="mode-inline" value="inline" checked/>
+        <span data-i18n="inline">Inline</span>
+      </label>
+      <label class="mode__opt">
+        <input type="radio" name="mode" id="mode-display" value="display"/>
+        <span data-i18n="display">Display</span>
+      </label>
+    </fieldset>
+
+    <section class="field">
+      <p class="label" data-i18n="previewLabel">Preview</p>
+      <div id="preview"></div>
+    </section>
+
+    <details class="palette" id="settings-details">
+      <summary class="palette__summary">
+        <span data-i18n="settingsLabel">Settings</span>
+        <span class="summary__meta"><span id="settings-swatch" class="swatch" aria-hidden="true"></span><span id="settings-summary"></span></span>
+      </summary>
+      <section class="settings palette__body">
+      <div class="setting">
+        <label for="font" class="setting__label" data-i18n="fontLabel">Font</label>
+        <select id="font" class="setting__ctrl">
+          <option value="tex">Computer Modern (TeX)</option>
+          <option value="newcm">New Computer Modern</option>
+          <option value="termes" selected>Termes (Times)</option>
+          <option value="stix2">STIX Two</option>
+          <option value="pagella">Pagella (Palatino)</option>
+          <option value="asana">Asana Math</option>
+        </select>
+      </div>
+      <div class="setting setting--align">
+        <label for="display-align" class="setting__label" data-i18n="alignLabel">Display</label>
+        <select id="display-align" class="setting__ctrl" title="Alignment of display equations (LaTeX: fleqn vs. centred)">
+          <option value="left" selected data-i18n="alignLeft">Left (indented, TeX fleqn)</option>
+          <option value="center" data-i18n="alignCenter">Centred</option>
+        </select>
+      </div>
+      <div class="setting setting--size">
+        <label for="size-mode" class="setting__label" data-i18n="sizeLabel">Size</label>
+        <select id="size-mode" class="setting__ctrl">
+          <option value="selection" selected data-i18n="sizeSelection">Match selection</option>
+          <option value="body" data-i18n="sizeBody">Match body</option>
+          <option value="fixed" data-i18n="sizeFixed">Fixed</option>
+        </select>
+        <input id="size-pt" class="setting__ctrl" type="number"
+               value="11" min="6" max="48" step="0.5" disabled
+               aria-label="Fixed point size"/>
+      </div>
+      <div class="setting">
+        <label for="color" class="setting__label" data-i18n="colorLabel">Color</label>
+        <input id="color" class="setting__ctrl" type="color"
+               value="#000000" aria-label="Equation color"/>
+      </div>
+      <div class="setting">
+        <label for="color-set" class="setting__label" data-i18n="swatchesLabel">Swatches</label>
+        <select id="color-set" class="setting__ctrl">
+          <option value="qualitative" data-i18n="colorSetQualitative">Qualitative cycle</option>
+          <option value="presentation" data-i18n="colorSetPresentation">Presentation</option>
+          <option value="semantic" data-i18n="colorSetSemantic">Semantic</option>
+          <option value="pastel" data-i18n="colorSetPastel">Pastel triplets</option>
+          <option value="shades" data-i18n="colorSetShades">Shade families</option>
+          <option value="grays" data-i18n="colorSetGrays">Greys</option>
+        </select>
+      </div>
+      <div id="swatches" class="swatches" role="group" aria-label="Colour swatches"></div>
+      </section>
+    </details>
+
+    <section class="numbering">
+      <label for="number-style" class="label" data-i18n="numberingLabel">Numbering</label>
+      <select id="number-style" class="setting__ctrl">
+        <option value="table" selected data-i18n="numberStyleTable">Flush right (table)</option>
+        <option value="inline" data-i18n="numberStyleInline">Inline (after equation)</option>
+        <option value="field" data-i18n="numberStyleField">Word field (desktop)</option>
+      </select>
+      <label class="check">
+        <input type="checkbox" id="number-this" disabled/>
+        <span data-i18n="numberThis">Number this equation</span>
+      </label>
+    </section>
+
+    <details class="palette" id="eq-list-details">
+      <summary class="palette__summary">
+        <span data-i18n="equationsLabel">Equations in this document</span>
+        <span id="eq-count" class="summary__count"></span>
+      </summary>
+      <ol id="eq-list" class="eqlist palette__body"></ol>
+    </details>
+    <div class="actions">
+      <button id="insert" disabled title="Ctrl+Enter">Insert equation</button>
+      <button id="new-eq" disabled data-i18n="newEq" title="Esc (while editing an equation)">New equation</button>
+      <button id="renumber" disabled data-i18n="renumberAll">Renumber all</button>
+    </div>
+
+  </main>
+
+  <script type="module" src="./taskpane.js"></script>
+</body>
+</html>

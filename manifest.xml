@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp
+    xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+    xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+    xsi:type="TaskPaneApp">
+
+  <Id>2a7c1e3a-9f4b-4c1d-8e1f-3c2a5b9d7e10</Id>
+  <Version>1.23.1.0</Version>
+  <ProviderName>A. Friedrich</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Recorde">
+    <Override Locale="de-DE" Value="Recorde"/>
+  </DisplayName>
+  <Description DefaultValue="Insert LaTeX equations as native SVG with editable source.">
+    <Override Locale="de-DE" Value="LaTeX-Gleichungen als bearbeitbares SVG einfügen."/>
+  </Description>
+  <IconUrl DefaultValue="https://localhost:3000/assets/recorde-ink-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/recorde-ink-64.png"/>
+  <SupportUrl DefaultValue="https://localhost:3000/"/>
+
+  <!-- No <AppDomains>: MathJax + fonts are self-hosted (WP3.3), so the add-in
+       loads only from its own origin — no external domains to allow-list. -->
+
+  <Hosts>
+    <Host Name="Document"/>
+  </Hosts>
+
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://localhost:3000/src/taskpane.html"/>
+  </DefaultSettings>
+
+  <Permissions>ReadWriteDocument</Permissions>
+
+  <!-- VersionOverrides adds the ribbon presence (a button on Word's Home tab
+       that opens the task pane). Clients that don't understand it fall back to
+       the <DefaultSettings><SourceLocation> task pane above. -->
+  <VersionOverrides
+      xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+      xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Document">
+        <DesktopFormFactor>
+          <!-- Required by the schema even when only ShowTaskpane is used. -->
+          <FunctionFile resid="functionFile"/>
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <Group id="mjxGroup">
+                <Label resid="grpLabel"/>
+                <Icon>
+                  <bt:Image size="16" resid="icon16"/>
+                  <bt:Image size="32" resid="icon32"/>
+                  <bt:Image size="80" resid="icon80"/>
+                </Icon>
+                <Control xsi:type="Button" id="mjxOpenTaskpane">
+                  <Label resid="btnLabel"/>
+                  <Supertip>
+                    <Title resid="btnTitle"/>
+                    <Description resid="btnDesc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon16"/>
+                    <bt:Image size="32" resid="icon32"/>
+                    <bt:Image size="80" resid="icon80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>mjxTaskpane</TaskpaneId>
+                    <SourceLocation resid="taskpaneUrl"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="icon16" DefaultValue="https://localhost:3000/assets/recorde-ink-16.png"/>
+        <bt:Image id="icon32" DefaultValue="https://localhost:3000/assets/recorde-ink-32.png"/>
+        <bt:Image id="icon80" DefaultValue="https://localhost:3000/assets/recorde-ink-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="functionFile" DefaultValue="https://localhost:3000/src/commands.html"/>
+        <bt:Url id="taskpaneUrl" DefaultValue="https://localhost:3000/src/taskpane.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="grpLabel" DefaultValue="Recorde"/>
+        <bt:String id="btnLabel" DefaultValue="Recorde"/>
+        <bt:String id="btnTitle" DefaultValue="Recorde — insert LaTeX equation">
+          <bt:Override Locale="de-DE" Value="Recorde – LaTeX-Gleichung einfügen"/>
+        </bt:String>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="btnDesc" DefaultValue="Open the task pane to insert LaTeX equations as native SVG with editable source.">
+          <bt:Override Locale="de-DE" Value="Task-Bereich öffnen, um LaTeX-Gleichungen als bearbeitbares SVG einzufügen."/>
+        </bt:String>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>

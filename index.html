@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recorde — LaTeX equations in Word</title>
+<link rel="icon" href="assets/recorde-ink-32.png">
+<style>
+  :root { color-scheme: light dark; --ink: #1b1b1b; --muted: #5a5a5a; --bg: #fbfaf7; --line: #d9d5cc; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ece9e2; --muted: #a8a49c; --bg: #16171a; --line: #34363b; } }
+  body { margin: 0; padding: 2rem 1rem 4rem; background: var(--bg); color: var(--ink); font: 16px/1.55 Georgia, "Times New Roman", serif; }
+  main { max-width: 42rem; margin: 0 auto; }
+  h1 { font-size: 2rem; margin: 0 0 .25rem; display: flex; align-items: center; gap: .6rem; }
+  h1 img { width: 40px; height: 40px; }
+  h2 { font-size: 1.15rem; margin-top: 2rem; border-bottom: 1px solid var(--line); padding-bottom: .2rem; }
+  p.lead { color: var(--muted); margin-top: 0; }
+  code { font: 0.92em ui-monospace, Menlo, Consolas, monospace; }
+  ol li, ul li { margin: .3rem 0; }
+  a { color: inherit; }
+</style></head>
+<body><main>
+<h1><img src="assets/recorde-ink-64.png" alt=""> Recorde</h1>
+<p class="lead">LaTeX equations in Word as vector pictures, with the source kept in the document so they stay editable.</p>
+
+<h2>Install</h2>
+<ol>
+  <li>Download <code>manifest.xml</code> from the release you were given.</li>
+  <li>In Word: <b>Home → Add-ins → More Add-ins → My Add-ins → Upload My Add-in</b>, choose the file. (Word on the web: <b>Insert → Add-ins → Upload My Add-in</b>.)</li>
+  <li>A <b>Recorde</b> button appears on the Home tab; it opens the task pane.</li>
+</ol>
+<p>Organisations can deploy the same manifest centrally through the Microsoft 365 admin centre (<i>Integrated apps</i>).</p>
+
+<h2>What it does</h2>
+<ul>
+  <li>Type LaTeX, see a live preview, insert inline or display equations; click an equation to edit it again.</li>
+  <li>Six math fonts (Termes by default), colour, size matched to the text, numbering in three styles with renumbering, TeX-style spacing and alignment.</li>
+  <li>A built-in macro preamble (operators, delimiters, derivatives, vectors, units, named colours) plus your own <code>\newcommand</code>s per document.</li>
+  <li>Works on Word for Windows and Mac (vector SVG) and Word on the web (high-resolution raster).</li>
+</ul>
+
+<h2>Privacy</h2>
+<p>Nothing leaves your document. The add-in loads only its own static files from this site; equations, their LaTeX and your settings are stored inside the <code>.docx</code>. No telemetry, no accounts.</p>
+
+<h2>Support</h2>
+<p>Questions and problems: contact the provider named in the add-in (A. Friedrich). When reporting a problem, include the Word version (File → Account) and, if the pane shows a red notice, its text.</p>
+<p>Licence: Apache 2.0 (<a href="LICENSE">LICENSE</a>, <a href="NOTICE">NOTICE</a>, <a href="THIRD-PARTY-NOTICES.md">third-party notices</a>).</p>
+</main></body></html>

@@ -1,0 +1,8 @@
+MathJax Office — Word add-in
+Copyright 2026 A. Friedrich
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product bundles MathJax and MathJax font packages, which are licensed under
+the Apache License, Version 2.0, and glyph data derived from third-party fonts.
+See THIRD-PARTY-NOTICES.md for details.

@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Manifest structural check
+        run: npm run validate:manifest
+      - name: Build (rewrite URLs) + check dist manifest
+        run: |
+          BASE_URL=https://example.com/mathjax-office npm run build
+          npm run validate:dist

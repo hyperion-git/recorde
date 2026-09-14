@@ -1,0 +1,26 @@
+node_modules/
+dist/
+npm-debug.log*
+
+# Vendored MathJax + fonts (WP3.3): populated from node_modules by
+# scripts/vendor-mathjax.mjs (postinstall); ~50 MB, not committed.
+assets/vendor/
+
+# office-addin-debugging writes a sideload manifest registry / temp state
+.office-addin-debugging/
+
+# dev cert artifacts, if ever copied into the tree
+*.crt
+*.key
+
+# OS
+.DS_Store
+
+# package-lock.json IS committed (npm ci / reproducible CI) — not ignored.
+
+# Release/sideload package (built from dist/ by hand; see deploy/VERIFY.md)
+deploy/*.xml
+deploy/*.reg
+
+# headless showcase build artefacts
+build/

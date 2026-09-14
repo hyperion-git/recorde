@@ -70,6 +70,13 @@ Showcase paper (v1.19)
       C:\Users\Public\MathJaxAddin): opens without repair prompt; click any equation → pane loads it;
       numbers flush right inside the columns; report layout differences.
 
+Host line + inline baseline (v1.23.2)
+- [ ] Settings panel, last line: "Host: Word <version> (PC) · insert: vector SVG · baseline shift: yes/no ·
+      fields: yes/no". REPORT THIS LINE. If "baseline shift: no", an info notice explains why (Word 2507+ needed).
+- [ ] With "baseline shift: yes": insert `\int_0^1 y\,dy` inline in a line of text → the "=" of the math
+      sits on the text baseline; descender of the integral hangs below. Red warning "lowering … failed"
+      would mean the API exists but rejected the call — report its text.
+
 Number position (v1.23)
 - [ ] New document: Settings → Numbering shows *Flush right (table)* by default.
 - [ ] A numbered equation's "(n)" ends exactly on the right text border (compare with a right-aligned

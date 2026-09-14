@@ -76,6 +76,24 @@ const NUMBER_CELL_WIDTH_PT = 54;   // ≈ 0.75in, fits "(99)"
 function displaySkipPt(bodyPt) {
   return Number.isFinite(bodyPt) && bodyPt > 0 ? bodyPt : 11;
 }
+// Host capability line (Settings panel) + a one-time notice when the baseline
+// shift is unavailable. Font.position is WordApiDesktop 1.3 (Word 2507 / Mac
+// 16.99, Microsoft 365 only) — without it inline math sits on its box bottom,
+// slightly high, and nothing else in the pane would reveal why.
+function hostVersion() {
+  const d = Office.context.diagnostics || {};
+  return { app: d.host || 'Word', version: d.version || '?', platform: d.platform || '?' };
+}
+function showHostInfo() {
+  const el = $('host-info');
+  if (!el) return;
+  const { app, version, platform } = hostVersion();
+  const yn = (b) => (b ? STR.hostYes : STR.hostNo);
+  const insert = insertMode === 'svg' ? STR.insertSvg : insertMode === 'png' ? STR.insertPng : STR.insertNone;
+  el.textContent = fmt(STR.hostLine, { app, version, platform, insert, shift: yn(canShiftBaseline), fields: yn(canInsertField) });
+  if (insertMode === 'svg' && !canShiftBaseline) notify('info', fmt(STR.noBaselineShift, { version }));
+}
+
 // Display alignment (Settings → Display): 'left' = LaTeX fleqn — flush left,
 // indented by \mathindent = 25 pt; 'center' = plain LaTeX. The document
 // scripts may override per equation (req.align).
@@ -114,6 +132,7 @@ Office.onReady(({ host }) => {
   installGlobalErrorHandlers();   // first, so any boot-time failure is visible
   STR = getStrings(Office.context.displayLanguage || globalThis.navigator?.language);
   applyI18n();
+  showHostInfo();                 // what this build can do — the first thing to read in a bug report
   wireUi();
   applySettingsToUi(loadSavedSettings());   // restore defaults BEFORE bootMathJax
   bootMathJax();                            // so MathJax boots with the saved font
@@ -1201,6 +1220,7 @@ async function tagSelectedPicture(uuid, latex, descentPt, displayMode, allowBase
         await context.sync();
       } catch (e) {
         console.warn('Font.position unavailable; baseline not shifted:', e.message);
+        notify('warn', fmt(STR.baselineShiftFailed, { error: e.message }));
       }
     }
     return true;

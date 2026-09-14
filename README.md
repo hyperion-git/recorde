@@ -58,7 +58,7 @@ opens the task pane.
 |---|---|---|---|
 | Render + preview | — | ✅ | ✅ |
 | Insert vector SVG equation | ImageCoercion 1.2 | ✅ | ❌ (raster PNG instead) |
-| Baseline-align inline math | WordApiDesktop 1.3 (Word 2507+) | ✅ | ❌ (sits slightly high) |
+| Baseline-align inline math | WordApiDesktop 1.3 (Win 2507+ / Mac 16.99+, Microsoft 365 only — not LTSC) | ✅ | ❌ (sits slightly high) |
 | Click-to-edit, storage, recovery, numbering (inline/table) | WordApi 1.3 | ✅ | ✅ |
 | SEQ-field numbering | WordApi 1.5 + desktop | ✅ | ❌ (option disabled) |
 
@@ -184,7 +184,9 @@ changes in `CHANGELOG.md`.
 ## Known limitations
 
 - Word on the web inserts raster pictures, cannot shift the baseline, and
-  cannot create SEQ fields (existing ones display).
+  cannot create SEQ fields (existing ones display). On desktop builds older
+  than 2507 (or any LTSC build) inline math also sits on its box bottom,
+  slightly high; the Settings panel's host line and a start-up notice say so.
 - Display alignment, spacing and numbering are Word paragraph/table
   formatting: a user can change them afterwards, and the add-in does not
   re-apply them on update.

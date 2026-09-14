@@ -4,6 +4,9 @@ All notable changes to Recorde (formerly "MathJax Office"). Versions are the
 add-in manifest versions; dates are commit dates.
 
 ## Unreleased — planned v2.0.0 (first release)
+- Host capability line in Settings (Word version, insert mode, baseline shift,
+  fields), a start-up notice when the baseline-shift API is missing, and a
+  visible warning when the shift call fails (1.23.2).
 - Public repository `hyperion-git/recorde` (squashed history); hosted build at
   `https://hyperion-git.github.io/recorde/`; support via GitHub issues.
 - Requirements documented (README, support page, skill); `engines.node >= 20`.

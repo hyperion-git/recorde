@@ -149,7 +149,11 @@ procedure and gotchas: `skills/recorde/SKILL.md` (also linked from
   A pasted equation whose part is missing is recovered from its alt text.
 - **Baseline** — inline pictures are lowered by the equation's descent
   (`Word.Font.position`, desktop only) so the math baseline meets the text
-  baseline without clipping descenders.
+  baseline without clipping descenders. Measured in Word 2608: Word applies
+  the lowering fully, clamped to the picture's height, but seats the box
+  *including* the bottom effect extent it adds on SVG import (0.75 pt) on the
+  baseline — so the add-in reads that margin back and adds it to the shift.
+  The headless emitter writes the run position directly with a zero margin.
 - **Numbering** — a document counter; the table style is a borderless 1×2
   table with a 54 pt number cell; the field style a `SEQ equation` field; the
   inline style bakes `(n)` into the picture. `numbering.js` holds the pure

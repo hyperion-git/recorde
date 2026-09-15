@@ -114,7 +114,9 @@ to edit it headlessly. Never edit `word/media` or `customXml` by hand — use
 ## Gotchas
 
 - Inline equations sit on the baseline only in Word (via a run position shift
-  the pass writes). LibreOffice previews show them slightly high — expected.
+  the pass writes: `w:position` = −2·descent half-points, zero effect extent;
+  Word lowers a picture by that value, clamped to the picture's height).
+  LibreOffice previews show them slightly high — expected.
 - A TeX error does not stop the pass: the equation is inserted with MathJax's
   error mark and a `warning:` is printed. Fix the LaTeX and `update` it.
 - Placeholders in headers/footers and text boxes are not processed (warned).

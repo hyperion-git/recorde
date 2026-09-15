@@ -73,9 +73,11 @@ Showcase paper (v1.19)
 Host line + inline baseline (v1.23.2)
 - [ ] Settings panel, last line: "Host: Word <version> (PC) · insert: vector SVG · baseline shift: yes/no ·
       fields: yes/no". REPORT THIS LINE. If "baseline shift: no", an info notice explains why (Word 2507+ needed).
-- [ ] With "baseline shift: yes": insert `\int_0^1 y\,dy` inline in a line of text → the "=" of the math
-      sits on the text baseline; descender of the integral hangs below. Red warning "lowering … failed"
-      would mean the API exists but rejected the call — report its text.
+- [ ] With "baseline shift: yes": insert `dog` (or `\int_0^1 y\,dy`) inline in a line of 9–12 pt text,
+      zoom 300 %+: the bottoms of d and o sit ON the text baseline (v1.23.3 adds Word's bottom
+      effectExtent — 0.75 pt on the 2026-09-15 sample — to the shift; before, the math sat that much high).
+      Save as C:\Users\Public\MathJaxAddin\inline-test.docx: the run should carry w:position ≈
+      -2·(descent + 0.75) half-points. Red warning "lowering … failed" → report its text.
 
 Number position (v1.23)
 - [ ] New document: Settings → Numbering shows *Flush right (table)* by default.

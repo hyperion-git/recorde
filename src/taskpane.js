@@ -1215,8 +1215,24 @@ async function tagSelectedPicture(uuid, latex, descentPt, displayMode, allowBase
       // sync MUST be inside the try or it fails the whole Word.run. On failure the
       // math floats above baseline by descentPt but stays visible; the tag/alt-text
       // already synced, so storage is unaffected.
+      //
+      // Word sizes the imported SVG to whole pixels and records the remainder as
+      // a bottom "effect extent" (measured 2026-09-15: wp:effectExtent b="9525"
+      // EMU = 0.75 pt on a 9 pt insert; 0 on OOXML we write ourselves). The box
+      // Word seats on the baseline INCLUDES that margin, so the ink ends that much
+      // above the baseline before any shift — a plain -descent left the math
+      // ~0.75 pt high. InlinePicture exposes no effectExtent, so read the run's
+      // OOXML back and add the margin to the shift. Word also clamps a picture's
+      // lowering to its own height (calibrated), never reached here.
       try {
-        pic.getRange('Whole').font.position = -descentPt;
+        let marginPt = 0;
+        try {
+          const ox = pic.getRange('Whole').getOoxml();
+          await context.sync();
+          const m = /<wp:effectExtent\b[^>]*\bb="(\d+)"/.exec(ox.value || '');
+          if (m) marginPt = parseInt(m[1], 10) / 12700;
+        } catch { /* no OOXML readback: fall back to the pure descent */ }
+        pic.getRange('Whole').font.position = -(descentPt + marginPt);
         await context.sync();
       } catch (e) {
         console.warn('Font.position unavailable; baseline not shifted:', e.message);

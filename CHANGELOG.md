@@ -4,6 +4,10 @@ All notable changes to Recorde (formerly "MathJax Office"). Versions are the
 add-in manifest versions; dates are commit dates.
 
 ## Unreleased — planned v2.0.0 (first release)
+- Inline baseline: the shift now includes the bottom effect extent Word adds
+  when it imports the SVG (0.75 pt measured), which had left inline math that
+  much above the baseline. Calibrated against Word 2608: a picture is lowered
+  by the stored value, clamped to its own height (1.23.3).
 - Host capability line in Settings (Word version, insert mode, baseline shift,
   fields), a start-up notice when the baseline-shift API is missing, and a
   visible warning when the shift call fails (1.23.2).

@@ -1,9 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { EXAMPLES, findExample } from '../src/examples.js';
-import { DEFAULT_PREAMBLE } from '../src/preamble.js';
-import { flattenLatex } from '../src/mathsvg.js';
+import { EXAMPLES, findExample } from '../addin/src/examples.js';
+import { DEFAULT_PREAMBLE } from '../core/preamble.js';
+import { flattenLatex } from '../core/mathsvg.js';
 import { initMathJaxLikePane, renderError } from '../scripts/mathjax-node.mjs';
 
 test('examples: unique ids, valid modes, non-empty sources', () => {

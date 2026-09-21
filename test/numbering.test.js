@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {
   formatNumber, decorateLatexForNumber, isStyleSupported, normalizeStyle,
   assignNumbers, nextNumberFor, numberPlacement, DEFAULT_NUMBERING, NUMBERING_STYLES,
-} from '../src/numbering.js';
+} from '../core/numbering.js';
 
 test('decorateLatexForNumber bakes the number into inline-style LaTeX', () => {
   // WHY: for the inline style the number is rendered INTO the SVG. If the
@@ -137,7 +137,7 @@ test('table/field equations are NOT decorated even when decorate is asked', () =
 });
 
 // ---- Style migration (increment 4) ----
-import { placementOf, migrationOp, planStyleMigration } from '../src/numbering.js';
+import { placementOf, migrationOp, planStyleMigration } from '../core/numbering.js';
 
 test('placementOf: an unnumbered equation is a bare picture whatever its style says', () => {
   // WHY: numberStyle is stored per equation even when numbered=false (it just

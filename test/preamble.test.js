@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { DEFAULT_PREAMBLE } from '../src/preamble.js';
+import { DEFAULT_PREAMBLE } from '../core/preamble.js';
 import { initMathJaxLikePane, renderError } from '../scripts/mathjax-node.mjs';
 
 // Commands MathJax cannot handle — they hang, error, or silently misrender. The
@@ -58,7 +58,7 @@ test('DEFAULT_PREAMBLE registers in MathJax and every ported macro + AFP colour 
 
 // ---- Acceptance against the author's paper template ----
 import { readFileSync } from 'node:fs';
-import { flattenLatex } from '../src/mathsvg.js';
+import { flattenLatex } from '../core/mathsvg.js';
 
 test('every math snippet of the paper template renders with DEFAULT_PREAMBLE (no error, no undefined macro)', async () => {
   // WHY: the preamble exists so the author's manuscripts paste into Word

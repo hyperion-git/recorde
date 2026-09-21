@@ -1,5 +1,5 @@
 // Vendor MathJax 4.1.2 + its SVG font packages from node_modules into
-// assets/vendor/mathjax/ (gitignored) so the add-in serves them same-origin — no
+// addin/assets/vendor/mathjax/ (gitignored) so the add-in serves them same-origin — no
 // CDN at runtime (offline + reproducible fonts; WP3.3). Run by `postinstall` and
 // `npm run vendor`. Defensive: a missing package warns and is skipped (so a
 // partial/offline install never fails `npm ci`); build.js fails loudly if the
@@ -10,7 +10,7 @@ import { dirname, join } from 'node:path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const NM = join(ROOT, 'node_modules');
-const OUT = join(ROOT, 'assets', 'vendor', 'mathjax');
+const OUT = join(ROOT, 'addin', 'assets', 'vendor', 'mathjax');
 // Fonts offered in the picker; each needs its SVG data pre-vendored because the
 // runtime font-switch fetches it from this same origin.
 const FONTS = ['tex', 'newcm', 'termes', 'stix2', 'pagella', 'asana'];
@@ -64,4 +64,4 @@ for (const f of FONTS) {
   if (await exists(svgDir)) await cp(svgDir, join(dst, 'svg'), { recursive: true });
   console.log(`vendored font mathjax-${f}`);
 }
-console.log('MathJax vendored → assets/vendor/mathjax/');
+console.log('MathJax vendored → addin/assets/vendor/mathjax/');

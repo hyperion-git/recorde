@@ -1,10 +1,11 @@
 node_modules/
 dist/
+release/
 npm-debug.log*
 
 # Vendored MathJax + fonts (WP3.3): populated from node_modules by
-# scripts/vendor-mathjax.mjs (postinstall); ~50 MB, not committed.
-assets/vendor/
+# scripts/vendor-mathjax.mjs (`prepare`); ~50 MB, not committed.
+addin/assets/vendor/
 
 # office-addin-debugging writes a sideload manifest registry / temp state
 .office-addin-debugging/
@@ -18,9 +19,9 @@ assets/vendor/
 
 # package-lock.json IS committed (npm ci / reproducible CI) — not ignored.
 
-# Release/sideload package (built from dist/ by hand; see deploy/VERIFY.md)
-deploy/*.xml
-deploy/*.reg
+# Local sideload staging for the developer's Word (manifest copy + .reg helpers;
+# see docs/VERIFY.md §1). Release packages are built into release/ instead.
+deploy/
 
 # headless showcase build artefacts
 build/

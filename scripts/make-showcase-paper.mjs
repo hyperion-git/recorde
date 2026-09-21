@@ -1,17 +1,17 @@
 // Build the showcase paper headlessly from the SAME source as the add-in's
-// "Test paper" (src/testpaper.js): outline → python-docx (layout, placeholders)
-// → mjx-docx process (equations) → check → deploy/Recorde-Showcase.docx.
+// "Test paper" (addin/src/testpaper.js): outline → python-docx (layout, placeholders)
+// → mjx-docx process (equations) → check → examples/Recorde-Showcase.docx.
 // Usage: node scripts/make-showcase-paper.mjs [--preview] [--out file.docx]
 import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { paperOutline } from '../src/testpaper.js';
+import { paperOutline } from '../addin/src/testpaper.js';
 import { DocxPackage } from '../headless/lib/zipdoc.mjs';
 import { processDocument, checkDocument, listEquations } from '../headless/lib/document.mjs';
 import { closeRenderers } from '../headless/lib/render.mjs';
 
 const args = process.argv.slice(2);
-const out = resolve(args.includes('--out') ? args[args.indexOf('--out') + 1] : 'deploy/Recorde-Showcase.docx');
+const out = resolve(args.includes('--out') ? args[args.indexOf('--out') + 1] : 'examples/Recorde-Showcase.docx');
 const preview = args.includes('--preview');
 // Python with python-docx: MJX_PYTHON="<cmd> [args]" overrides; else a
 // micromamba env named by MJX_MAMBA_ENV (default sci-base) if micromamba is on

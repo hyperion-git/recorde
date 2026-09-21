@@ -1,4 +1,4 @@
-"""Generate deploy/Recorde-TestPage.docx — a one-page manual test document.
+"""Generate examples/Recorde-TestPage.docx — a one-page manual test document.
 
 A short physics-style text with numbered insertion points. Each point names the
 exact pane settings to use, so working through the page exercises every option
@@ -105,6 +105,6 @@ for label in ('6a edit/update', '6b renumber', '6c equation list', '6d Esc', '7d
     row = t.add_row().cells
     row[0].text = label
 
-out = 'deploy/Recorde-TestPage.docx'
+out = 'examples/Recorde-TestPage.docx'
 doc.save(out)
 print('wrote', out)

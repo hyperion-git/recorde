@@ -3,8 +3,8 @@
 // switch fonts; worker threads have their own module registry. Mirrors the
 // pane's loader (taskpane.js loadMathJax) so headless renders match the add-in.
 import { parentPort, workerData } from 'node:worker_threads';
-import { DEFAULT_PREAMBLE } from '../../src/preamble.js';
-import { flattenLatex, mathJaxFontName } from '../../src/mathsvg.js';
+import { DEFAULT_PREAMBLE } from '../../core/preamble.js';
+import { flattenLatex, mathJaxFontName } from '../../core/mathsvg.js';
 
 // MathJax's component loader logs "No version information…" for every [tex]
 // extension in Node; nothing actionable, so keep the CLI output clean.

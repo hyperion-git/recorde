@@ -1,10 +1,10 @@
 // Headless equation rendering — the add-in's buildSvgForInsert without a browser.
 // Same MathJax packages, same font packages, same post-processing helpers from
-// src/mathsvg.js (scale to pt from the viewBox, inline currentColor, descent).
+// core/mathsvg.js (scale to pt from the viewBox, inline currentColor, descent).
 import { Worker } from 'node:worker_threads';
 import { DOMParser } from 'linkedom';
-import { scaleSvgToPt, inlineColors, descentPtFromViewBox } from '../../src/mathsvg.js';
-import { KNOWN_FONTS } from '../../src/settings.js';
+import { scaleSvgToPt, inlineColors, descentPtFromViewBox } from '../../core/mathsvg.js';
+import { KNOWN_FONTS } from '../../core/settings.js';
 
 const workers = new Map();     // font → { worker, pending: Map<id, {resolve}>, ready }
 let nextId = 1;

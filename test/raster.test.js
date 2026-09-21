@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {
   PX_PER_PT, MAX_BASE64_LENGTH, TARGET_DPI, ptToPx, clampScale,
   computeRasterSize, stripDataUri, isPayloadTooLarge,
-} from '../src/raster.js';
+} from '../core/raster.js';
 
 test('ptToPx converts pt → CSS px (72pt = 96px)', () => {
   assert.equal(ptToPx(72), 96);

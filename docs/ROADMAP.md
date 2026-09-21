@@ -1,6 +1,6 @@
-# MathJax Office — Development Program
+# Recorde — Development Program
 
-Status (v1.23.1 / M2 complete except pane cross-references, M3 partly): **inserts on Word desktop (vector SVG) and Word on the web (raster)**; colour, palette, macro preamble (paper template), three numbering styles with migration and renumber, TeX display spacing/alignment, self-hosted MathJax, German UI, dark theme, headless `mjx-docx` CLI + agent skill (`headless/ROADMAP.md`). First public release planned as v2.0.0 (`docs/RELEASE.md`).
+Status (v1.23.1 / M2 complete except pane cross-references, M3 partly): **inserts on Word desktop (vector SVG) and Word on the web (raster)**; colour, palette, macro preamble (paper template), three numbering styles with migration and renumber, TeX display spacing/alignment, self-hosted MathJax, German UI, dark theme, headless `mjx-docx` CLI + agent skill (`docs/ROADMAP-headless.md`). First public release planned as v2.0.0 (`docs/RELEASE.md`).
 web (raster PNG)**. LaTeX → SVG/PNG insert, 6 MathJax-4 fonts, click-to-edit,
 custom-XML-part storage with alt-text cross-document recovery, settings persistence,
 visible error UX, ribbon button, manifest validated against Microsoft's XSD. (v1.0
@@ -74,7 +74,7 @@ multi-host (WP3.1) inherits whatever the palette/numbering UI becomes.
 ### WP0.1 — Extract pure core + unit tests  · `M` · low risk
 - **Why:** the bug-prone logic (ex→pt scaling, viewBox descent, XML escaping) is
   buried inside `taskpane.js` functions that can't be imported.
-- **Approach:** lift host-independent helpers into `src/mathsvg.js`
+- **Approach:** lift host-independent helpers into `core/mathsvg.js`
   (`computeRenderSize`, `scaleSvgToPt`, a new `descentPtFromViewBox`,
   `flattenLatex`, `mathJaxFontName`); export `buildXml`/`parseXml` from
   `storage.js`. **Module/DOM setup must be decided:** `package.json` has no
@@ -120,7 +120,7 @@ multi-host (WP3.1) inherits whatever the palette/numbering UI becomes.
 
 ## M1 — Robust + web-capable  (release v1.2) — ✅ SHIPPED
 
-> All five WPs implemented (see `M1-PLAN.md` for the build plan and the
+> All five WPs implemented (see `docs/archive/M1-PLAN.md` for the build plan and the
 > host-integration checklist to run in real Word). Pure logic is unit-tested
 > (`node --test`, 67 cases); the host-integration items flagged there still need a
 > Word run to confirm.
@@ -257,7 +257,7 @@ multi-host (WP3.1) inherits whatever the palette/numbering UI becomes.
   mandatory-tested, host integration is manually checked per the README
   checklist (no Office mock until it pays for itself).
 - **Docs** — README carries the host matrix + sideload/checklist; this
-  `ROADMAP.md` is the living plan.
+  `docs/ROADMAP.md` is the living plan.
 - **Security/privacy** — `PRIVACY.md` (nothing leaves the document; MathJax and
   fonts are self-hosted since WP3.3, no CDN); support URL = the Pages site; a EULA
   only if ever AppSource-bound.

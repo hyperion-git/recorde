@@ -66,7 +66,7 @@ Showcase paper (v1.19)
       takes a minute or two; final notice "… 0 failed". Two-column body from Sec. I on.
 - [ ] Sec. IV.A: one inline-style number "(13)" inside the picture; one SEQ-field equation (Alt+F9).
 - [ ] Sec. IV.B: six fonts visibly differ; IV.C: 8/10/12/14 pt inline sizes, blue equation, AFP colours.
-- [ ] Compare with deploy/Recorde-Showcase.docx (headless twin of the same source, also in
+- [ ] Compare with examples/Recorde-Showcase.docx (headless twin of the same source, also in
       C:\Users\Public\MathJaxAddin): opens without repair prompt; click any equation → pane loads it;
       numbers flush right inside the columns; report layout differences.
 

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { DOMParser } from 'linkedom';
 
-import { looksLikeEquation, buildDegradedPayload } from '../src/recovery.js';
+import { looksLikeEquation, buildDegradedPayload } from '../core/recovery.js';
 
 test('looksLikeEquation: LaTeX markers always pass', () => {
   assert.equal(looksLikeEquation('\\frac{1}{2}'), true);
@@ -50,7 +50,7 @@ test('degraded payload round-trips through storage, dropping the flag', async ()
   // WHY: the `degraded` key is harmless metadata for the caller; it must not leak
   // into the persisted XML part. buildXml only serializes the known fields.
   globalThis.DOMParser = (await import('linkedom')).DOMParser;
-  const { buildXml, parseXml } = await import('../src/storage.js');
+  const { buildXml, parseXml } = await import('../core/storage.js');
 
   const xml = buildXml(buildDegradedPayload({ uuid: 'u9', latex: '\\alpha=\\beta', sizePt: 9 }));
   assert.ok(!xml.includes('degraded'), 'degraded flag must not reach storage');

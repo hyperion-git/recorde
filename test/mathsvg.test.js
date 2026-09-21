@@ -11,7 +11,7 @@ import {
   mathJaxFontName, flattenLatex, computeRenderSize,
   descentPtFromViewBox, scaleSvgToPt, inlineColors, EX_PER_EM,
   isParagraphTextEmpty, findRenderError,
-} from '../src/mathsvg.js';
+} from '../core/mathsvg.js';
 
 test('mathJaxFontName maps short → mathjax-<short>', () => {
   assert.equal(mathJaxFontName('stix2'), 'mathjax-stix2');

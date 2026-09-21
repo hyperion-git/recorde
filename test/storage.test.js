@@ -9,7 +9,7 @@ import {
   buildXml, parseXml, embedSourceInSvg, readSourceFromSvg,
   buildPreambleXml, parsePreambleXml,
   buildNumberingXml, parseNumberingXml,
-} from '../src/storage.js';
+} from '../core/storage.js';
 
 test('buildXml → parseXml round-trips, preserving XML metacharacters', () => {
   // WHY: the LaTeX source is the whole point of the storage layer. If escaping

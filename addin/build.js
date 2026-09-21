@@ -1,34 +1,26 @@
-// Packaging build (WP0.2). Produces dist/ = src/ + assets/ + a manifest whose
-// dev-origin URLs are rewritten to BASE_URL. Pure Node, ESM, no dependencies.
+// Build the deployable add-in site into dist/ for one HTTPS origin.
 //
-//   BASE_URL=https://you.github.io/recorde node build.js
-//   node build.js https://you.github.io/recorde
-//
-// The browser sources use relative paths (incl. the self-hosted MathJax under
-// assets/vendor), so only manifest.xml carries the dev origin to rewrite.
+// Repository layout vs served layout: the pane lives in addin/src/, the pure
+// modules it shares with the headless CLI in core/. Both are served from ONE
+// directory, <base>/src/ (pane files import them as ./x.js), so the published
+// URLs — <base>/src/taskpane.html, <base>/assets/… — never change with the
+// repository layout. addin/dev-server.cjs applies the same merge for `npm start`.
 import { readFile, writeFile, rm, mkdir, cp, access, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-const ROOT = dirname(fileURLToPath(import.meta.url));
+const ADDIN = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(ADDIN, '..');
+const CORE = join(ROOT, 'core');
 const DIST = join(ROOT, 'dist');
 const DEV_ORIGIN = 'https://localhost:3000';
 
-// Dev and prod must be DISTINCT Office add-in identities. The source manifest
-// carries the dev <Id> (used by `npm start` sideloading against localhost). If
-// the deployed manifest reused it, Office — which keys add-in registrations by
-// <Id> (desktop: HKCU\…\WEF\Developer; web: browser local storage) — would
-// collide the prod add-in with the stale localhost-bound dev registration and
-// fail to load ("Add-in can't be loaded"). The dist manifest therefore gets a
-// fixed prod <Id>, rewritten at build time. Keep PROD_ID STABLE so redeploys
-// update the same prod add-in in place (do NOT derive it from BASE_URL — moving
-// hosts would orphan the prior registration, reintroducing the cache problem).
 const DEV_ID = '2a7c1e3a-9f4b-4c1d-8e1f-3c2a5b9d7e10';
 const PROD_ID = '9971ece4-30c4-421f-920e-8df1563b6bd5';
 
 const BASE_URL = (process.env.BASE_URL || process.argv[2] || '').replace(/\/+$/, '');
 if (!BASE_URL) {
-  console.error('Usage: BASE_URL=https://host/path node build.js   (or pass it as $1)');
+  console.error('Usage: BASE_URL=https://host/path node addin/build.js   (or pass it as $1)');
   process.exit(1);
 }
 if (!/^https:\/\//.test(BASE_URL)) {
@@ -38,19 +30,27 @@ if (!/^https:\/\//.test(BASE_URL)) {
 
 await rm(DIST, { recursive: true, force: true });
 await mkdir(DIST, { recursive: true });
-await cp(join(ROOT, 'src'), join(DIST, 'src'), { recursive: true });
-await cp(join(ROOT, 'assets'), join(DIST, 'assets'), { recursive: true });
-for (const f of ['LICENSE', 'NOTICE', 'THIRD-PARTY-NOTICES.md', 'index.html']) {
-  await cp(join(ROOT, f), join(DIST, f));   // license files + the support page (manifest SupportUrl = site root)
+await cp(join(ADDIN, 'src'), join(DIST, 'src'), { recursive: true });
+// Merge core/ into the served src/ — a name clash would silently shadow a pane file.
+const paneFiles = new Set(await readdir(join(ADDIN, 'src')));
+for (const f of await readdir(CORE)) {
+  if (!f.endsWith('.js')) continue;
+  if (paneFiles.has(f)) { console.error(`core/${f} clashes with addin/src/${f}; rename one.`); process.exit(1); }
+  await cp(join(CORE, f), join(DIST, 'src', f));
+}
+await cp(join(ADDIN, 'assets'), join(DIST, 'assets'), { recursive: true });
+await cp(join(ADDIN, 'index.html'), join(DIST, 'index.html'));   // support page (manifest SupportUrl = site root)
+for (const f of ['LICENSE', 'NOTICE', 'THIRD-PARTY-NOTICES.md']) {
+  await cp(join(ROOT, f), join(DIST, f));
 }
 
 // WP3.3: the self-hosted MathJax must ship or the deployed add-in can't render.
-// It's vendored from node_modules by postinstall (gitignored), so a checkout that
+// It's vendored from node_modules by `prepare` (gitignored), so a checkout that
 // skipped `npm install` would otherwise produce a broken dist — fail loudly.
 try {
   await access(join(DIST, 'assets', 'vendor', 'mathjax', 'tex-svg.js'));
 } catch {
-  console.error('Missing vendored MathJax (assets/vendor/mathjax/tex-svg.js). '
+  console.error('Missing vendored MathJax (addin/assets/vendor/mathjax/tex-svg.js). '
     + 'Run `npm install` (or `npm run vendor`) before building.');
   process.exit(1);
 }
@@ -60,7 +60,7 @@ try {
 // stale HTML with new JS (or vice versa) — the v1.12.0 pane "didn't show". Give
 // every release a distinct URL for its WHOLE module graph: the manifest's pane
 // URL, the module <script>, and each relative import in dist/src/*.js carry
-// ?v=<package version>. The dev tree (src/) is left untouched.
+// ?v=<package version>. The source trees are left untouched.
 const { version } = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'));
 const V = encodeURIComponent(version);
 const srcDir = join(DIST, 'src');
@@ -81,7 +81,7 @@ for (const f of await readdir(srcDir)) {
   }
 }
 
-let manifest = await readFile(join(ROOT, 'manifest.xml'), 'utf8');
+let manifest = await readFile(join(ADDIN, 'manifest.xml'), 'utf8');
 manifest = manifest.split('src/taskpane.html"').join(`src/taskpane.html?v=${V}"`);
 
 // 1) Dev origin → deploy origin.
@@ -92,7 +92,7 @@ manifest = manifest.split(DEV_ORIGIN).join(BASE_URL);
 // loudly if the expected dev Id isn't present — a silent miss here is exactly
 // the bug that produced the load blocker.
 if (!manifest.includes(DEV_ID)) {
-  console.error(`Expected dev <Id> ${DEV_ID} in manifest.xml; not found. Aborting.`);
+  console.error(`Expected dev <Id> ${DEV_ID} in addin/manifest.xml; not found. Aborting.`);
   process.exit(1);
 }
 manifest = manifest.split(DEV_ID).join(PROD_ID);

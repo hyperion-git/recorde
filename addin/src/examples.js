@@ -3,7 +3,7 @@
 // with the default macro preamble). Loading one starts a NEW equation with the
 // given source and mode; `numbered` also ticks "Number this equation" so the
 // numbering path is exercised. Doubles as the manual smoke-test set
-// (deploy/VERIFY.md). Sources keep real newlines: the editor shows them as
+// (docs/VERIFY.md). Sources keep real newlines: the editor shows them as
 // typed and flattenLatex() joins lines before MathJax sees them.
 
 export const EXAMPLES = [

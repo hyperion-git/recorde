@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { COLOR_SETS, findColorSet, normalizeHex } from '../src/colors.js';
+import { COLOR_SETS, findColorSet, normalizeHex } from '../addin/src/colors.js';
 
 test('colour sets: unique ids, valid lowercase hex, no duplicate names within a row', () => {
   // WHY: every hex is assigned straight to <input type=color>, which silently

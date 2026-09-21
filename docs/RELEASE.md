@@ -6,13 +6,13 @@ the hosted build it points to, so the gate is verification in real Word.
 
 ## 1. Gate: verify in Word (desktop + web)
 
-Work through `deploy/VERIFY.md` on the current build. Blocking sections for the
+Work through `docs/VERIFY.md` on the current build. Blocking sections for the
 first release, none of which have been run in Word since v1.17:
 
 - §3 numbering styles incl. *Style migration (v1.17)*, *Display spacing
   (v1.20)*, *Display alignment (v1.21)*, *Showcase paper (v1.19)*.
-- Headless round-trip (H0.1 of `headless/ROADMAP.md`): open
-  `deploy/Recorde-Showcase.docx` in desktop Word — no repair prompt, equations
+- Headless round-trip (H0.1 of `docs/ROADMAP-headless.md`): open
+  `examples/Recorde-Showcase.docx` in desktop Word — no repair prompt, equations
   render, clicking one loads it in the pane. Then unzip one add-in-written
   document into `test/fixtures/golden-addin/` and diff against
   `headless/lib/ooxml.mjs`.
@@ -45,7 +45,7 @@ git push origin main                      # Pages deploy runs; wait for it
 gh run watch --exit-status $(gh run list --workflow "Deploy to GitHub Pages" --limit 1 --json databaseId -q '.[0].databaseId')
 git tag -a v2.0.0 -m "Recorde v2.0.0" && git push origin v2.0.0
 gh release create v2.0.0 --title "Recorde v2.0.0" --notes-file docs/release-notes-2.0.0.md \
-  dist/manifest.xml deploy/Recorde-Showcase.docx
+  dist/manifest.xml examples/Recorde-Showcase.docx
 ```
 
 Attach `dist/manifest.xml` (the installable file) and the showcase document.

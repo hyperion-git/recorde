@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { SNIPPET_CURSOR, applySnippet, PALETTE } from '../src/snippets.js';
+import { SNIPPET_CURSOR, applySnippet, PALETTE } from '../addin/src/snippets.js';
 
 test('applySnippet: plain symbol inserts at the caret, caret follows it', () => {
   const r = applySnippet('ab', 1, 1, '\\pi');

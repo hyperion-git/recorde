@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {
   KNOWN_FONTS, DEFAULT_SETTINGS,
   normalizeSettings, serializeSettings, parseSettings,
-} from '../src/settings.js';
+} from '../core/settings.js';
 
 test('KNOWN_FONTS has the exact dropdown order', () => {
   assert.deepEqual(KNOWN_FONTS, ['tex', 'newcm', 'termes', 'stix2', 'pagella', 'asana']);

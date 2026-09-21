@@ -132,11 +132,11 @@ The output is what the add-in would have inserted — same SVG (PNG fallback),
 `urn:mathjax-office:equations` custom XML part — so equations stay click-to-edit
 in Word and `list`/`update` can edit what a human changed in Word. Agent
 procedure and gotchas: `skills/recorde/SKILL.md` (also linked from
-`.claude/skills/`); plan and status: `headless/ROADMAP.md`.
+`.claude/skills/`); plan and status: `docs/ROADMAP-headless.md`.
 
 ## How it works
 
-- **Render** — MathJax 4.1.2 SVG output, vendored under `assets/vendor/mathjax`
+- **Render** — MathJax 4.1.2 SVG output, vendored under `addin/assets/vendor/mathjax`
   with the six font packages; `fontCache: 'none'` inlines every glyph so each
   picture is self-contained. Switching fonts re-bootstraps MathJax with a new
   `output.font`.
@@ -158,7 +158,7 @@ procedure and gotchas: `skills/recorde/SKILL.md` (also linked from
   table with a 54 pt number cell; the field style a `SEQ equation` field; the
   inline style bakes `(n)` into the picture. `numbering.js` holds the pure
   rules (assignment, migration), `taskpane.js` the Word glue.
-- **Pure core** — `src/mathsvg.js`, `numbering.js`, `settings.js`,
+- **Pure core** — `core/mathsvg.js`, `numbering.js`, `settings.js`,
   `storage.js` (build/parse), `preamble.js`, `placeholders`/`paragraphs`/
   `ooxml` in `headless/lib` are host-independent and unit-tested with
   `node --test`; the headless CLI imports them directly.
@@ -182,7 +182,7 @@ Build and deploy: `BASE_URL=https://<host>/<path> npm run build` writes
 `npm run validate:dist`. The GitHub Pages workflow does this on every push to
 `main`. Bump with `npm run bump -- X.Y.Z` (syncs `package.json` and
 `manifest.xml`) before deploying so caches refresh. Manual in-Word checks are
-listed in `deploy/VERIFY.md`; the release procedure in `docs/RELEASE.md`;
+listed in `docs/VERIFY.md`; the release procedure in `docs/RELEASE.md`;
 changes in `CHANGELOG.md`.
 
 ## Known limitations
@@ -198,7 +198,7 @@ changes in `CHANGELOG.md`.
   headless route provides labels and `REF` fields.
 - Macros that MathJax 4 cannot express (starred `\Ds`, `\bBigg@` sizes, stretchy
   harpoons, esvect, stackengine) are approximated — see the header of
-  `src/preamble.js`.
+  `core/preamble.js`.
 - Fonts are embedded per equation as SVG paths; very large equations on the
   web path may exceed the picture size limit and are reported.
 

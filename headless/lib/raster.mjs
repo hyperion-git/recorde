@@ -4,7 +4,7 @@
 // @resvg/resvg-js (optional npm dep, no external tools) → cairosvg (python) →
 // ImageMagick `convert`. The first that works wins; the choice is reported.
 import { spawnSync } from 'node:child_process';
-import { computeRasterSize } from '../../src/raster.js';
+import { computeRasterSize } from '../../core/raster.js';
 
 let resvgMod;   // undefined = not tried, null = unavailable
 

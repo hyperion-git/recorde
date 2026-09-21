@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { isLikelyOffline, describeInsertError, pictureVanishedNotice } from '../src/errors.js';
+import { isLikelyOffline, describeInsertError, pictureVanishedNotice } from '../addin/src/errors.js';
 
 // isLikelyOffline reads globalThis.navigator?.onLine. Set & restore it around the
 // one test that depends on it so the rest of the suite sees the real (or absent)

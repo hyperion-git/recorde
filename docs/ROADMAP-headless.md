@@ -6,7 +6,7 @@
 > refreshed by `renumber`, Termes default, and the showcase paper built from the add-in's own source
 > (`scripts/make-showcase-paper.mjs`). NOT done: H0.1 golden fixture from desktop Word (the OOXML shapes are
 > spec-derived and LibreOffice-checked only — verify in Word, then pin), H0.2 monorepo split
-> (the CLI imports the pure modules straight from `src/`), the H2.3 agent trial, H3.
+> (the shared modules now live in `core/`, imported directly by both the pane and the CLI; no separate package), the H2.3 agent trial, H3.
 > Plan text below is the original and unchanged.
 
 # MathJax Office — Headless toolset & agent skill

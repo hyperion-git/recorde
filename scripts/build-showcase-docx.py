@@ -1,5 +1,5 @@
 """Headless twin of the add-in's test paper: build the RevTeX-style layout with
-python-docx from the outline JSON on stdin (see src/testpaper.js paperOutline),
+python-docx from the outline JSON on stdin (see addin/src/testpaper.js paperOutline),
 leaving equations as placeholders for `mjx-docx process`.
 Usage: node scripts/make-showcase-paper.mjs  (this script is called by it)."""
 import json, sys

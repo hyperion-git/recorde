@@ -1,11 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { TEST_PAGE, testPageEquations } from '../src/testpage.js';
-import { KNOWN_FONTS } from '../src/settings.js';
-import { NUMBERING_STYLES } from '../src/numbering.js';
-import { DEFAULT_PREAMBLE } from '../src/preamble.js';
-import { flattenLatex } from '../src/mathsvg.js';
+import { TEST_PAGE, testPageEquations } from '../addin/src/testpage.js';
+import { KNOWN_FONTS } from '../core/settings.js';
+import { NUMBERING_STYLES } from '../core/numbering.js';
+import { DEFAULT_PREAMBLE } from '../core/preamble.js';
+import { flattenLatex } from '../core/mathsvg.js';
 import { initMathJaxLikePane, renderError } from '../scripts/mathjax-node.mjs';
 
 test('test page: well-formed blocks with settings the pane actually offers', () => {

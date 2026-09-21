@@ -6,7 +6,7 @@
 // version, or localhost URLs left in a built manifest.
 import { readFile } from 'node:fs/promises';
 
-const path = process.argv[2] || 'manifest.xml';
+const path = process.argv[2] || 'addin/manifest.xml';
 const xml = await readFile(path, 'utf8');
 const errors = [];
 

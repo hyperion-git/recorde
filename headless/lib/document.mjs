@@ -10,10 +10,10 @@ import { randomUUID } from 'node:crypto';
 import {
   NS, NUMBERING_NS, PREAMBLE_NS, buildXml, parseXml, buildNumberingXml, parseNumberingXml,
   buildPreambleXml, parsePreambleXml, embedSourceInSvg,
-} from '../../src/storage.js';
-import { decorateLatexForNumber, assignNumbers, numberPlacement, DEFAULT_NUMBERING, NUMBERING_STYLES } from '../../src/numbering.js';
-import { buildDegradedPayload } from '../../src/recovery.js';
-import { KNOWN_FONTS, DEFAULT_SETTINGS } from '../../src/settings.js';
+} from '../../core/storage.js';
+import { decorateLatexForNumber, assignNumbers, numberPlacement, DEFAULT_NUMBERING, NUMBERING_STYLES } from '../../core/numbering.js';
+import { buildDegradedPayload } from '../../core/recovery.js';
+import { KNOWN_FONTS, DEFAULT_SETTINGS } from '../../core/settings.js';
 import { renderEquation } from './render.mjs';
 import { svgToPng } from './raster.mjs';
 import {

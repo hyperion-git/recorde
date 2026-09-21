@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { STRINGS, pickLocale, strings } from '../src/i18n.js';
+import { STRINGS, pickLocale, strings } from '../addin/src/i18n.js';
 
 test('pickLocale matches by primary subtag, falls back to en', () => {
   assert.equal(pickLocale('de-DE'), 'de');

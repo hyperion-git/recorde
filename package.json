@@ -19,6 +19,9 @@
   "engines": {
     "node": ">=20"
   },
+  "config": {
+    "dev_server_port": 3000
+  },
   "scripts": {
     "dev-server": "node scripts/vendor-mathjax.mjs && node addin/dev-server.cjs",
     "start": "office-addin-debugging start addin/manifest.xml desktop",

@@ -60,7 +60,12 @@ const tgz = readFileSync(join(packDir, tgzName));
 rmSync(packDir, { recursive: true, force: true });
 
 // --- zips --------------------------------------------------------------------
-const mtime = new Date();
+// Reproducible archives: every entry gets the release commit's timestamp
+// (SOURCE_DATE_EPOCH overrides), so a local run and the workflow's run produce
+// identical bytes and SHA256SUMS. The npm tarball is deterministic on its own.
+const git = spawnSync('git', ['log', '-1', '--format=%ct'], { cwd: ROOT, encoding: 'utf8' });
+const epoch = Number(process.env.SOURCE_DATE_EPOCH || (git.status === 0 && git.stdout.trim()) || 0);
+const mtime = new Date(epoch * 1000);
 const file = (buf, exec = false) => [buf instanceof Uint8Array ? buf : new Uint8Array(buf),
   exec ? { mtime, os: 3, attrs: 0o100755 << 16 } : { mtime, os: 3, attrs: 0o100644 << 16 }];
 const licences = { 'LICENSE': file(read('LICENSE')), 'NOTICE': file(read('NOTICE')), 'THIRD-PARTY-NOTICES.md': file(read('THIRD-PARTY-NOTICES.md')) };
@@ -76,7 +81,7 @@ const wordZip = zipSync({ [wordDir]: {
   'Recorde-Showcase.docx': file(read('examples/Recorde-Showcase.docx')),
   'PRIVACY.md': file(read('PRIVACY.md')),
   ...licences,
-} }, { level: 6 });
+} }, { level: 6, mtime, os: 3, attrs: (0o40755 << 16) | 0x10 });   // top-level opts reach the directory entries (files carry their own attrs)
 
 const cliDir = `recorde-mjx-docx-${version}`;
 const skillFiles = Object.fromEntries(readdirSync(rel('skills/recorde')).map((f) => [f, file(read(`skills/recorde/${f}`))]));
@@ -86,7 +91,7 @@ const cliZip = zipSync({ [cliDir]: {
   'skill': { 'recorde': skillFiles },
   'Recorde-Showcase.docx': file(read('examples/Recorde-Showcase.docx')),
   ...licences,
-} }, { level: 6 });
+} }, { level: 6, mtime, os: 3, attrs: (0o40755 << 16) | 0x10 });   // top-level opts reach the directory entries (files carry their own attrs)
 
 const outputs = {
   [`${wordDir}.zip`]: wordZip,

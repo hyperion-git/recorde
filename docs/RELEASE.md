@@ -51,6 +51,10 @@ writes into `release/`:
 | `manifest.xml` | the released manifest alone, for *Upload My Add-in* |
 | `SHA256SUMS` | checksums of the three files above |
 
+Archives are reproducible: entries are stamped with the release commit's date
+(`SOURCE_DATE_EPOCH` overrides), so a local `npm run package` and the workflow's
+run give identical zips and `SHA256SUMS`.
+
 The packager refuses a manifest that still contains `localhost` or the dev
 `<Id>`, or whose `<Version>` differs from `package.json`; the Windows installers
 must carry the manifest's `<Id>` (they register under it).

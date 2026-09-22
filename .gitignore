@@ -4,7 +4,7 @@ release/
 npm-debug.log*
 
 # Vendored MathJax + fonts (WP3.3): populated from node_modules by
-# scripts/vendor-mathjax.mjs (`prepare`); ~50 MB, not committed.
+# scripts/vendor-mathjax.mjs (npm run build / dev-server / vendor); ~50 MB, not committed.
 addin/assets/vendor/
 
 # office-addin-debugging writes a sideload manifest registry / temp state

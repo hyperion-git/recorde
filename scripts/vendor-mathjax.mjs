@@ -1,9 +1,11 @@
 // Vendor MathJax 4.1.2 + its SVG font packages from node_modules into
 // addin/assets/vendor/mathjax/ (gitignored) so the add-in serves them same-origin — no
-// CDN at runtime (offline + reproducible fonts; WP3.3). Run by `postinstall` and
-// `npm run vendor`. Defensive: a missing package warns and is skipped (so a
-// partial/offline install never fails `npm ci`); build.js fails loudly if the
-// core bundle didn't make it into dist.
+// CDN at runtime (offline + reproducible fonts; WP3.3). Runs at the start of
+// `npm run build` and `npm run dev-server`, or by hand as `npm run vendor`. It is
+// deliberately not an npm lifecycle script: the same package.json is installed
+// from a tarball by mjx-docx users, who have no add-in to vendor for.
+// Defensive: a missing package warns and is skipped (so a partial/offline install
+// never breaks); build.js fails loudly if the core bundle didn't make it into dist.
 import { cp, mkdir, rm, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';

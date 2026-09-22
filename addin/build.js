@@ -45,13 +45,13 @@ for (const f of ['LICENSE', 'NOTICE', 'THIRD-PARTY-NOTICES.md']) {
 }
 
 // WP3.3: the self-hosted MathJax must ship or the deployed add-in can't render.
-// It's vendored from node_modules by `prepare` (gitignored), so a checkout that
-// skipped `npm install` would otherwise produce a broken dist — fail loudly.
+// scripts/vendor-mathjax.mjs copies it from node_modules (gitignored) at the start
+// of `npm run build`; a bare `node addin/build.js` on a fresh checkout fails loudly.
 try {
   await access(join(DIST, 'assets', 'vendor', 'mathjax', 'tex-svg.js'));
 } catch {
   console.error('Missing vendored MathJax (addin/assets/vendor/mathjax/tex-svg.js). '
-    + 'Run `npm install` (or `npm run vendor`) before building.');
+    + 'Run `npm run vendor` (or `npm run build`, which does) before building.');
   process.exit(1);
 }
 

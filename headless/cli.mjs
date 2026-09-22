@@ -1,7 +1,9 @@
 // mjx-docx — headless MathJax equations for .docx files (agent-facing CLI).
 // Subcommands: process, render, list, update, renumber, check, preview.
 import { parseArgs } from 'node:util';
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, lstatSync, rmSync, symlinkSync, cpSync, realpathSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { basename, dirname, join, resolve } from 'node:path';
 import { DocxPackage } from './lib/zipdoc.mjs';
@@ -25,6 +27,9 @@ const USAGE = `mjx-docx — MathJax equations for Word documents, without Word (
   mjx-docx renumber <file.docx> [-o out.docx]
   mjx-docx check <file.docx> [--json]            exit 1 on errors
   mjx-docx preview <file.docx> [--out <dir>] [--dpi <n>]   LibreOffice → PDF → PNG pages
+  mjx-docx skill install [--project <dir>] [--copy] | remove [--project <dir>] | path
+      Install the bundled "recorde" agent skill for Claude Code: ~/.claude/skills/recorde
+      (every project) or <dir>/.claude/skills/recorde. Symlinked unless --copy.
 `;
 
 function fail(msg, code = 2) { process.stderr.write(`mjx-docx: ${msg}\n`); process.exit(code); }
@@ -155,6 +160,42 @@ function cmdPreview(args) {
   console.log(`${outDir}: PDF + PNG pages (${basename(prefix)}-N.png). LibreOffice ≠ Word for baseline/spacing; treat as a sanity check.`);
 }
 
+// The skill ships inside this package (skills/recorde, next to headless/), so an
+// installed copy — repo checkout or `npm install -g` of the tarball — can put it
+// where Claude Code looks without knowing where the package landed.
+const SKILL_SRC = fileURLToPath(new URL('../skills/recorde/', import.meta.url)).replace(/[\\/]$/, '');
+
+function cmdSkill(args) {
+  const [sub, ...rest] = args;
+  const { values: v } = opts(rest, { project: { type: 'string' }, copy: { type: 'boolean' } });
+  const isLink = (p) => { try { return lstatSync(p).isSymbolicLink(); } catch { return false; } };
+  const base = v.project ? join(resolve(v.project), '.claude', 'skills') : join(homedir(), '.claude', 'skills');
+  const dst = join(base, 'recorde');
+  switch (sub) {
+    case 'path': console.log(SKILL_SRC); return;
+    case 'remove':
+      if (isLink(dst) || existsSync(dst)) { rmSync(dst, { recursive: true, force: true }); console.log(`removed ${dst}`); }
+      else console.log(`nothing at ${dst}`);
+      return;
+    case 'install': {
+      if (!existsSync(join(SKILL_SRC, 'SKILL.md'))) fail(`skill source missing: ${SKILL_SRC}`);
+      mkdirSync(base, { recursive: true });
+      if (isLink(dst) && realpathSync(dst) === realpathSync(SKILL_SRC)) { console.log(`already installed: ${dst} → ${SKILL_SRC}`); return; }
+      if (isLink(dst) || existsSync(dst)) fail(`${dst} exists; run \`mjx-docx skill remove${v.project ? ' --project ' + v.project : ''}\` first`);
+      let how = 'symlink';
+      if (v.copy) { cpSync(SKILL_SRC, dst, { recursive: true }); how = 'copy'; }
+      else {
+        try { symlinkSync(SKILL_SRC, dst, 'dir'); }
+        catch (e) { cpSync(SKILL_SRC, dst, { recursive: true }); how = `copy (symlink failed: ${e.code})`; }
+      }
+      console.log(`installed ${dst} (${how})`);
+      console.log('Claude Code lists it as "recorde"; the skill runs `mjx-docx`, so keep this command on the PATH.');
+      return;
+    }
+    default: fail(`skill: expected install | remove | path (got "${sub ?? ''}")`);
+  }
+}
+
 export async function main(argv) {
   const [cmd, ...rest] = argv;
   switch (cmd) {
@@ -165,6 +206,7 @@ export async function main(argv) {
     case 'renumber': return cmdRenumber(rest);
     case 'check': return cmdCheck(rest);
     case 'preview': return cmdPreview(rest);
+    case 'skill': return cmdSkill(rest);
     case '-h': case '--help': case 'help': case undefined: process.stdout.write(USAGE); return;
     case '--version': case '-V': console.log(WRITER); return;
     default: fail(`unknown command "${cmd}"\n\n${USAGE}`);

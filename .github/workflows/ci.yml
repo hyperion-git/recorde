@@ -22,3 +22,5 @@ jobs:
         run: |
           BASE_URL=https://example.com/recorde npm run build
           npm run validate:dist
+      - name: Release packages build (smoke)
+        run: npm run package

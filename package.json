@@ -3,46 +3,57 @@
   "version": "1.23.3",
   "private": true,
   "license": "Apache-2.0",
+  "description": "Recorde — LaTeX equations in Word as editable MathJax SVG (add-in) and in .docx files without Word (mjx-docx CLI).",
   "type": "module",
-  "description": "Recorde \u2014 LaTeX equations in Word as editable MathJax SVG (add-in) and in .docx files without Word (mjx-docx CLI).",
+  "bin": {
+    "mjx-docx": "headless/bin/mjx-docx.mjs"
+  },
+  "files": [
+    "core/",
+    "headless/",
+    "skills/",
+    "docs/INSTALL-mjx-docx.md",
+    "NOTICE",
+    "THIRD-PARTY-NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "dev-server": "node addin/dev-server.cjs",
+    "dev-server": "node scripts/vendor-mathjax.mjs && node addin/dev-server.cjs",
     "start": "office-addin-debugging start addin/manifest.xml desktop",
     "stop": "office-addin-debugging stop addin/manifest.xml",
     "test": "node --test",
-    "build": "node addin/build.js",
+    "build": "node scripts/vendor-mathjax.mjs && node addin/build.js",
     "validate": "office-addin-manifest validate addin/manifest.xml",
     "validate:manifest": "node scripts/check-manifest.mjs addin/manifest.xml",
     "validate:dist": "node scripts/check-manifest.mjs dist/manifest.xml",
     "bump": "node scripts/bump-version.mjs",
     "vendor": "node scripts/vendor-mathjax.mjs",
-    "postinstall": "node scripts/vendor-mathjax.mjs",
     "install-certs": "office-addin-dev-certs install",
     "mjx-docx": "node headless/bin/mjx-docx.mjs",
     "fixtures:headless": "micromamba run -n sci-base python scripts/make-headless-fixtures.py",
-    "skill:install": "node scripts/install-skill.mjs"
+    "skill:install": "node headless/bin/mjx-docx.mjs skill install",
+    "package": "node scripts/package-release.mjs"
   },
-  "devDependencies": {
+  "dependencies": {
     "@mathjax/mathjax-asana-font": "4.1.2",
     "@mathjax/mathjax-newcm-font": "4.1.2",
     "@mathjax/mathjax-pagella-font": "4.1.2",
     "@mathjax/mathjax-stix2-font": "4.1.2",
     "@mathjax/mathjax-termes-font": "4.1.2",
     "@mathjax/mathjax-tex-font": "4.1.2",
+    "fflate": "^0.8.3",
     "linkedom": "^0.18.12",
-    "mathjax": "4.1.2",
-    "office-addin-debugging": "^6.1.1",
-    "office-addin-dev-certs": "^2.0.9",
-    "office-addin-manifest": "^2.1.5"
-  },
-  "dependencies": {
-    "fflate": "^0.8.3"
+    "mathjax": "4.1.2"
   },
   "optionalDependencies": {
     "@resvg/resvg-js": "^2.6.2"
   },
-  "bin": {
-    "mjx-docx": "headless/bin/mjx-docx.mjs"
+  "devDependencies": {
+    "office-addin-debugging": "^6.1.1",
+    "office-addin-dev-certs": "^2.0.9",
+    "office-addin-manifest": "^2.1.5"
   },
   "repository": {
     "type": "git",
@@ -51,8 +62,5 @@
   "homepage": "https://hyperion-git.github.io/recorde/",
   "bugs": {
     "url": "https://github.com/hyperion-git/recorde/issues"
-  },
-  "engines": {
-    "node": ">=20"
   }
 }

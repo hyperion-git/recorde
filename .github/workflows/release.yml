@@ -1,0 +1,57 @@
+name: Release packages
+
+# Builds the downloadable packages (scripts/package-release.mjs) and attaches
+# them to the GitHub release for the pushed tag — as a DRAFT if the release does
+# not exist yet, so publishing stays a human decision (docs/RELEASE.md).
+# A manual run on any ref only uploads the packages as a workflow artifact.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  BASE_URL: https://hyperion-git.github.io/recorde   # the Pages origin the released manifest points at
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Tag must match package.json
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          v="$(node -p "require('./package.json').version")"
+          test "$GITHUB_REF_NAME" = "v$v" || { echo "tag $GITHUB_REF_NAME ≠ package.json v$v"; exit 1; }
+      - run: npm test
+      - name: Build the add-in for the Pages origin
+        run: npm run build && npm run validate:dist
+      - name: Package
+        run: npm run package
+      - uses: actions/upload-artifact@v6
+        with:
+          name: recorde-packages
+          path: release/
+      - name: Attach to the GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="$GITHUB_REF_NAME"
+          notes="docs/release-notes-${tag#v}.md"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            if [ -f "$notes" ]; then
+              gh release create "$tag" --draft --title "Recorde $tag" --notes-file "$notes"
+            else
+              gh release create "$tag" --draft --title "Recorde $tag" --generate-notes
+            fi
+          fi
+          gh release upload "$tag" release/*.zip release/manifest.xml release/SHA256SUMS --clobber

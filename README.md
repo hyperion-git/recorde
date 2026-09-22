@@ -14,7 +14,7 @@ whose equations open in the add-in.
 - **TeX layout rules** — display equations get `\abovedisplayskip` /
   `\belowdisplayskip` (one body size) and continue the paragraph without an
   indent; left-aligned (`fleqn`, 25 pt math indent) by default or centred.
-- **Macro preamble** — the author's paper-template macros (operators,
+- **Macro preamble** — a physics paper template's macros (operators,
   delimiters, derivatives, vectors, a siunitx subset, 174 named colours) are
   built in; add per-document `\newcommand`s in the pane.
 - **Colour, sizes, examples** — swatches from a scientific-figure palette,
@@ -26,43 +26,25 @@ whose equations open in the add-in.
   (see `PRIVACY.md`).
 - **English and German** UI.
 
-## Install (end users)
+## Install
 
-**What you need**
+Each [release](https://github.com/hyperion-git/recorde/releases) ships two
+packages. Pick the one you need; each contains its own `INSTALL.md`.
 
-- Word for Microsoft 365 on Windows or Mac (current channel), or Word on the
-  web. The pane detects what the host can do at start-up: vector SVG insert
-  needs ImageCoercion 1.2 (Microsoft 365 desktop builds since 2019), the web
-  falls back to a high-resolution raster picture, and a host with neither
-  shows the preview but disables Insert. Baseline-aligned inline math needs
-  Word 2507 or later. Older perpetual versions (2016/2019/2021) are untested.
-- Network access to the hosting site on first use (Word caches the pane
-  afterwards). No admin rights for *Upload My Add-in*; no installer; nothing
-  is written outside the document and Word's add-in cache.
+| Package | For | Guide |
+|---|---|---|
+| `recorde-word-addin-<v>.zip` | Writing equations in Word. Contains `manifest.xml`, installer scripts for Windows and Mac, the showcase document. | [docs/INSTALL-word.md](docs/INSTALL-word.md) |
+| `recorde-mjx-docx-<v>.zip` | Producing `.docx` files with equations from scripts or coding agents, without Word. Contains the npm package and the agent skill. | [docs/INSTALL-mjx-docx.md](docs/INSTALL-mjx-docx.md) |
 
-**Steps.** The add-in is web-hosted; the only file to install is
-`manifest.xml` from the release you were given (it points at the hosted build).
+**Word (short version):** extract the zip, run `install-windows.cmd` or
+`sh install-mac.command`, restart Word — or upload `manifest.xml` via
+*Home → Add-ins → More Add-ins → My Add-ins → Upload My Add-in* (also on Word
+on the web). Needs Word for Microsoft 365 (desktop or web); the guide has the
+host matrix.
 
-- **Word for Windows / Mac:** Home → Add-ins → *More Add-ins* → **My Add-ins** →
-  *Upload My Add-in* → choose `manifest.xml`. Word on the web: Insert → Add-ins
-  → *Upload My Add-in*.
-- **Organisation-wide:** an admin deploys the same manifest through the
-  Microsoft 365 admin centre (*Integrated apps*).
-
-A **Recorde** button (in a group of the same name) appears on the Home tab; it
-opens the task pane.
-
-### Supported hosts
-
-| Capability | Requirement set | Word Win/Mac | Word web |
-|---|---|---|---|
-| Render + preview | — | ✅ | ✅ |
-| Insert vector SVG equation | ImageCoercion 1.2 | ✅ | ❌ (raster PNG instead) |
-| Baseline-align inline math | WordApiDesktop 1.3 (Win 2507+ / Mac 16.99+, Microsoft 365 only — not LTSC) | ✅ | ❌ (sits slightly high) |
-| Click-to-edit, storage, recovery, numbering (inline/table) | WordApi 1.3 | ✅ | ✅ |
-| SEQ-field numbering | WordApi 1.5 + desktop | ✅ | ❌ (option disabled) |
-
-A host that supports neither coercion still previews but cannot insert.
+**Headless (short version):** Node.js 20+, then
+`npm install -g ./recorde-<v>.tgz` from the zip and `mjx-docx skill install`
+for Claude Code. From a checkout: `npm install && npm link`.
 
 ## Using the pane
 
@@ -71,58 +53,28 @@ A host that supports neither coercion still previews but cannot insert.
 2. Choose **Inline** or **Display**. Display equations go on their own line,
    with TeX spacing above and below, left-aligned (or centred via Settings).
 3. Tick **Number this equation** for a display equation. The numbering style
-   (Settings → Numbering) is per document: *Flush right (table)* (default:
-   the number sits on the right text border), *Inline* (trails the
-   equation), or *Word field* (desktop, also flush right). Changing the style offers to convert the existing
-   numbered equations; **Renumber all** re-sequences in document order.
+   (Settings → Numbering) is per document: *Flush right (table)* (default),
+   *Inline*, or *Word field* (desktop). Changing the style offers to convert
+   the existing numbered equations; **Renumber all** re-sequences in document
+   order.
 4. **Insert** (Ctrl+Enter). Click any inserted equation later to load it back
    into the pane and **Update** it in place; **New equation** (Esc) clears.
 5. Settings (collapsible): font, size (match selection / match body / fixed
-   pt), colour with swatches, display alignment, and the per-document
-   `\newcommand` preamble (applied to every equation on top of the built-in
-   macros).
+   pt), colour with swatches, display alignment, the per-document
+   `\newcommand` preamble, and a host line showing what this Word build
+   supports (insert mode, baseline shift, fields).
 
-The Examples menu's *Testing* group inserts a one-page test page and a
-RevTeX-style three-page test paper (76 equations across every option); the
-same paper is produced headlessly by `node scripts/make-showcase-paper.mjs`.
+## Using `mjx-docx`
 
-## Headless: equations without Word (`mjx-docx`)
-
-CLI agents and build pipelines never have a running Word. `headless/` ships the
-same renderer as an OOXML post-processor: write equations as placeholders while
-building a `.docx` with python-docx, docx-js or pandoc, then run the pass.
-
-**Install:** Node.js 20 or newer, then
+Write equations as placeholders while building a `.docx` with python-docx,
+docx-js or pandoc, then run the pass:
 
 ```
-git clone https://github.com/hyperion-git/recorde.git && cd recorde
-npm install            # MathJax + fonts + zip/raster libraries (~200 MB with fonts)
-npm link               # optional: puts `mjx-docx` on your PATH; else use node headless/bin/mjx-docx.mjs
-```
-
-`preview` additionally needs LibreOffice and poppler-utils (`pdftoppm`); the
-PNG fallback inside each picture uses `@resvg/resvg-js` (installed with
-`npm install`; cairosvg or ImageMagick are used if it is missing). No Word,
-no Python, no network access at run time.
-
-**Install the agent skill (Claude Code).** After `npm install` and `npm link`:
-
-```
-npm run skill:install                       # → ~/.claude/skills/recorde (all your projects)
-npm run skill:install -- --project ~/my-paper   # → that project's .claude/skills/ only
-```
-
-It symlinks `skills/recorde` (so `git pull` updates it; `--copy` copies
-instead, `--remove` undoes). Claude Code lists it as `recorde` and applies
-it whenever a Word document needs formulas; `/recorde` invokes it by hand.
-For other agents, paste `skills/recorde/AGENTS-snippet.md` into the
-project's `AGENTS.md`.
-
-```
-node headless/bin/mjx-docx.mjs process paper.docx [--font termes] [--align left]
-node headless/bin/mjx-docx.mjs check paper.docx                    # structural lint (exit 1 = fix first)
-node headless/bin/mjx-docx.mjs preview paper.docx                  # LibreOffice → preview/paper-1.png
-node headless/bin/mjx-docx.mjs list|update|renumber|render …       # round-trip editing
+mjx-docx process paper.docx [--font termes] [--align left]   # replace placeholders
+mjx-docx check paper.docx                                     # structural lint (exit 1 = fix first)
+mjx-docx preview paper.docx                                   # LibreOffice → preview/paper-1.png
+mjx-docx list|update|renumber|render …                        # round-trip editing
+mjx-docx skill install [--project DIR]                        # the agent skill for Claude Code
 ```
 
 Placeholders: `[[math: …]]` inline, `[[display: …]]`, `[[eq#label: …]]` numbered,
@@ -130,9 +82,31 @@ Placeholders: `[[math: …]]` inline, `[[display: …]]`, `[[eq#label: …]]` nu
 The output is what the add-in would have inserted — same SVG (PNG fallback),
 `mjx:<uuid>` alt-text title, LaTeX description, source in a
 `urn:mathjax-office:equations` custom XML part — so equations stay click-to-edit
-in Word and `list`/`update` can edit what a human changed in Word. Agent
-procedure and gotchas: `skills/recorde/SKILL.md` (also linked from
-`.claude/skills/`); plan and status: `docs/ROADMAP-headless.md`.
+in Word and `list`/`update` can edit what a human changed in Word. Grammar,
+builder recipes and gotchas: `skills/recorde/SKILL.md`.
+
+## Repository layout
+
+```
+addin/          the Word add-in: manifest.xml (dev), src/ (pane), assets/ (icons; vendor/ = MathJax,
+                gitignored), index.html (support page), build.js, dev-server.cjs, install/ (sideload scripts)
+core/           pure modules shared by pane and CLI: mathsvg, numbering, settings, storage, preamble,
+                recovery, raster — unit-tested, host-independent
+headless/       the mjx-docx CLI: bin/, cli.mjs, lib/ (placeholders, paragraphs, ooxml, zipdoc, render, raster)
+skills/recorde/ the agent skill (SKILL.md, AGENTS-snippet.md); shipped in the npm package
+examples/       Recorde-Showcase.docx (76 equations, produced headlessly), Recorde-TestPage.docx
+docs/           INSTALL-word.md, INSTALL-mjx-docx.md, RELEASE.md, VERIFY.md (in-Word checks),
+                ROADMAP.md, ROADMAP-headless.md, release notes, archive/
+scripts/        package-release.mjs (the zips), vendor-mathjax.mjs, bump-version.mjs,
+                check-manifest.mjs, showcase/fixture generators
+test/           node --test suites + fixtures
+```
+
+One `package.json` serves both deliverables: the add-in is built into `dist/`
+and hosted (GitHub Pages); the CLI is the npm package (`files` whitelists
+`core/`, `headless/`, `skills/`). The pane is served from one merged directory,
+`<base>/src/` = `addin/src/` + `core/`, so the published URLs never depend on
+the repository layout.
 
 ## How it works
 
@@ -156,12 +130,8 @@ procedure and gotchas: `skills/recorde/SKILL.md` (also linked from
   The headless emitter writes the run position directly with a zero margin.
 - **Numbering** — a document counter; the table style is a borderless 1×2
   table with a 54 pt number cell; the field style a `SEQ equation` field; the
-  inline style bakes `(n)` into the picture. `numbering.js` holds the pure
-  rules (assignment, migration), `taskpane.js` the Word glue.
-- **Pure core** — `core/mathsvg.js`, `numbering.js`, `settings.js`,
-  `storage.js` (build/parse), `preamble.js`, `placeholders`/`paragraphs`/
-  `ooxml` in `headless/lib` are host-independent and unit-tested with
-  `node --test`; the headless CLI imports them directly.
+  inline style bakes `(n)` into the picture. `core/numbering.js` holds the pure
+  rules (assignment, migration), `addin/src/taskpane.js` the Word glue.
 
 ## Development
 
@@ -170,20 +140,20 @@ same machine (the dev server sideloads the manifest); the showcase-paper script
 also needs Python with python-docx.
 
 ```sh
-npm install            # toolchain + MathJax + fonts (postinstall vendors MathJax)
+npm install            # toolchain + MathJax + fonts
 npm run install-certs  # once: trust the localhost dev certificate
-npm start              # serve src/ over HTTPS and sideload into Word
+npm start              # vendor MathJax, serve addin/ over HTTPS, sideload into Word
 npm test               # unit + headless end-to-end tests (node --test)
 npm run validate:manifest
 ```
 
-Build and deploy: `BASE_URL=https://<host>/<path> npm run build` writes
-`dist/` with every URL rewritten and versioned (`?v=<version>`), then
-`npm run validate:dist`. The GitHub Pages workflow does this on every push to
-`main`. Bump with `npm run bump -- X.Y.Z` (syncs `package.json` and
-`manifest.xml`) before deploying so caches refresh. Manual in-Word checks are
-listed in `docs/VERIFY.md`; the release procedure in `docs/RELEASE.md`;
-changes in `CHANGELOG.md`.
+Build, package and release: `BASE_URL=https://<host>/<path> npm run build`
+writes `dist/` with every URL rewritten and versioned (`?v=<version>`);
+`npm run package` builds the two zips into `release/`. The Pages workflow
+deploys `dist/` on every push to `main`; a `v*` tag makes the release workflow
+attach the packages to a draft GitHub release. Bump with `npm run bump -- X.Y.Z`
+(syncs `package.json` and `addin/manifest.xml`). Manual in-Word checks:
+`docs/VERIFY.md`; release procedure: `docs/RELEASE.md`; changes: `CHANGELOG.md`.
 
 ## Known limitations
 

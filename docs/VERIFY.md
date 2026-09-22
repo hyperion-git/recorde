@@ -1,14 +1,21 @@
-# In-Word verification package (current build: see `manifest.xml` here; sections are tagged with the version that introduced them)
+# In-Word verification package (sections are tagged with the version that introduced them)
 
-`manifest.xml` here points at the live GitHub Pages build
-(https://hyperion-git.github.io/recorde/), built from `main` on every push.
+The add-in under test is the live GitHub Pages build
+(https://hyperion-git.github.io/recorde/), built from `main` on every push; the
+manifest that points at it is `dist/manifest.xml` after
+`BASE_URL=https://hyperion-git.github.io/recorde npm run build`, or the
+`manifest.xml` inside `release/recorde-word-addin-<v>.zip` after `npm run package`.
 
 ## 1. Load the add-in in Word for Windows
 
 The developer machine uses a sideload registration for the add-in (registry
 `HKCU\Software\Microsoft\Office\16.0\WEF\Developer`, value `9971ece4-…` →
-`C:\Users\Public\MathJaxAddin\manifest.xml`); the build step copies the current
-manifest into that folder.
+`C:\Users\Public\MathJaxAddin\manifest.xml`); copy the built manifest into
+that folder by hand. The released package's `install-windows.cmd` registers the
+same value pointing at `%LOCALAPPDATA%\Recorde\manifest.xml` instead — running
+it replaces the developer registration (uninstall-windows.cmd removes it).
+The local `deploy/` folder (untracked, gitignored) keeps a manifest copy and
+the `sideload.reg` / `unsideload.reg` helpers mentioned below.
 
 1. Close Word completely (check the tray / Task Manager for WINWORD.EXE).
 2. Start Word, open a blank document.

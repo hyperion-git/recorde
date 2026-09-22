@@ -20,13 +20,13 @@
 <p class="lead">LaTeX equations in Word as vector pictures, with the source kept in the document so they stay editable.</p>
 
 <h2>Install</h2>
-<p>Needs Word for Microsoft 365 (Windows or Mac) or Word on the web; no admin rights, no installer. Vector equations and native field numbering are desktop features, the web inserts high-resolution raster pictures.</p>
+<p>Needs Word for Microsoft 365 (Windows or Mac) or Word on the web; no admin rights. Vector equations and native field numbering are desktop features, the web inserts high-resolution raster pictures.</p>
 <ol>
-  <li>Download <code>manifest.xml</code> from the release you were given.</li>
-  <li>In Word: <b>Home → Add-ins → More Add-ins → My Add-ins → Upload My Add-in</b>, choose the file. (Word on the web: <b>Insert → Add-ins → Upload My Add-in</b>.)</li>
+  <li>Download <code>recorde-word-addin-&lt;version&gt;.zip</code> from the <a href="https://github.com/hyperion-git/recorde/releases">releases page</a> and extract it.</li>
+  <li>Either run the installer — <code>install-windows.cmd</code>, or <code>sh install-mac.command</code> in Terminal — and restart Word; or, in Word, <b>Home → Add-ins → More Add-ins → My Add-ins → Upload My Add-in</b> and choose <code>manifest.xml</code> (Word on the web: <b>Home → Add-ins → More Settings → Upload My Add-in</b>).</li>
   <li>A <b>Recorde</b> button appears on the Home tab; it opens the task pane.</li>
 </ol>
-<p>Organisations can deploy the same manifest centrally through the Microsoft 365 admin centre (<i>Integrated apps</i>).</p>
+<p>The zip's <code>INSTALL.md</code> has the details, updating and troubleshooting. Organisations can deploy the same manifest centrally through the Microsoft 365 admin centre (<i>Integrated apps</i>). Equations without Word: the <code>recorde-mjx-docx-&lt;version&gt;.zip</code> package on the same page (Node.js command-line tool + agent skill).</p>
 
 <h2>What it does</h2>
 <ul>

@@ -4,6 +4,27 @@ All notable changes to Recorde (formerly "MathJax Office"). Versions are the
 add-in manifest versions; dates are commit dates.
 
 ## Unreleased — planned v2.0.0 (first release)
+- Downloadable release packages (`npm run package` → `release/`, attached to
+  the GitHub release by a workflow on every `v*` tag): `recorde-word-addin-<v>.zip`
+  (released manifest, INSTALL.md, Windows/Mac sideload installers, showcase
+  document) and `recorde-mjx-docx-<v>.zip` (npm tarball, INSTALL.md, agent
+  skill, showcase document), plus `manifest.xml` alone and `SHA256SUMS`.
+- Word installers: `install-windows.cmd` registers the manifest for the
+  current user (Office's developer sideload registry value, named by the
+  add-in Id), `install-mac.command` copies it into Word's `wef` folder;
+  matching uninstallers.
+- `mjx-docx skill install|remove|path` installs the bundled agent skill from
+  wherever the package is installed (replaces `scripts/install-skill.mjs`;
+  `npm run skill:install` still works in a checkout).
+- npm package: `files` whitelist (`core/`, `headless/`, `skills/`); MathJax,
+  the six fonts and linkedom are `dependencies` (the CLI's runtime); no
+  lifecycle scripts — MathJax vendoring for the add-in runs inside
+  `npm run build` / `npm run dev-server` instead of `postinstall`.
+- Repository layout: `addin/` (pane, manifest, assets, build, dev server,
+  support page, installers), `core/` (shared pure modules), `headless/`
+  (CLI), `docs/` (install guides, RELEASE, VERIFY, roadmaps, archive),
+  `examples/` (showcase + test page). Published site layout unchanged.
+- Separate install guides: `docs/INSTALL-word.md`, `docs/INSTALL-mjx-docx.md`.
 - Inline baseline: the shift now includes the bottom effect extent Word adds
   when it imports the SVG (0.75 pt measured), which had left inline math that
   much above the baseline. Calibrated against Word 2608: a picture is lowered

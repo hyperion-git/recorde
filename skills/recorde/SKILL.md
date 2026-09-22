@@ -11,15 +11,20 @@ equation pictures. Never hand-write drawing or customXml XML.
 
 ## Prerequisites
 
-Node.js 20+ and a checkout of the Recorde repository
-(`https://github.com/hyperion-git/recorde`) with `npm install` and `npm link`
-run once: the first fetches MathJax, the six font packages and the zip/raster
-libraries, the second puts the `mjx-docx` command on the PATH — every command
-below assumes it. Without `npm link`, replace `mjx-docx` by
-`node $RECORDE_DIR/headless/bin/mjx-docx.mjs`. Optional: LibreOffice +
-poppler-utils for `preview`; Python with python-docx only if you build
-documents that way. Word is not needed and nothing is fetched at run time.
-Not sure it is installed? `mjx-docx --version` prints `mjx-docx/<version>`.
+Node.js 20+ and the `mjx-docx` command on the PATH — every command below
+assumes it. Two ways to get it (details: `docs/INSTALL-mjx-docx.md` in the
+Recorde repository, also shipped as `INSTALL.md` in the release zip):
+
+- release zip `recorde-mjx-docx-<version>.zip` from
+  `https://github.com/hyperion-git/recorde/releases`:
+  `npm install -g ./recorde-<version>.tgz`;
+- or a checkout of the repository with `npm install` and `npm link`.
+
+Without a PATH entry, replace `mjx-docx` by `node <package>/headless/bin/mjx-docx.mjs`
+(`<package>` = the checkout, or `$(npm root -g)/recorde`). Optional:
+LibreOffice + poppler-utils for `preview`; Python with python-docx only if you
+build documents that way. Word is not needed and nothing is fetched at run
+time. Not sure it is installed? `mjx-docx --version` prints `mjx-docx/<version>`.
 
 ## Procedure
 
